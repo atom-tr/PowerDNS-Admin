@@ -46,7 +46,7 @@ class URLRecord(db.Model):
         return {
             'name': self.name,
             'type': 'URL',
-            'ttl': 0,
+            'ttl': 300,
             'records': [{
                 'content': self.content, 
                 'disabled': self.disabled
@@ -78,7 +78,7 @@ def create_nginx_config(mapper, connection, target):
     if not os.path.exists(folder):
         current_app.logger.error('{} does not exists'.format(folder))
     # create the conf file
-    with open('folder/{}.conf'.format(folder,target._name), 'w') as f:
+    with open('{}/{}.conf'.format(folder,target._name), 'w') as f:
         f.write(NGINX_REDIRECT.format(target._name, target.url))
         f.close()
     
@@ -182,11 +182,11 @@ class Record(object):
         check = list(filter(lambda check: check['name'] == self.name, rrsets))
         if check:
             r = check[0]
-            if r['type'] in ('A', 'AAAA', 'CNAME'):
+            if r['type'] in ('A', 'AAAA', 'CNAME', 'URL'):
                 return {
                     'status': 'error',
                     'msg':
-                    'Record already exists with type "A", "AAAA" or "CNAME"'
+                    'Record already exists with type "A", "AAAA", "CNAME" or "URL Redirect"'
                 }
 
         # Continue if the record is ready to be added

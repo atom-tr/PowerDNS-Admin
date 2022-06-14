@@ -2,7 +2,7 @@ import json
 from urllib.parse import urljoin
 from base64 import b64encode
 from flask import (
-    Blueprint, g, request, abort, current_app, make_response, jsonify,
+    Blueprint, g, request, abort, current_app, make_response, jsonify, escape,
 )
 from flask_login import current_user
 
@@ -1186,7 +1186,7 @@ def api_server_forward():
 @apikey_auth
 def api_server_config_forward(server_id):
     resp = helper.forward_request()
-    return resp.content, resp.status_code, resp.headers.items()
+    return escape(resp.content), escape(resp.status_code), resp.headers.items()
 
 # The endpoint to synchronize Domains in background
 @api_bp.route('/sync_domains', methods=['GET'])
