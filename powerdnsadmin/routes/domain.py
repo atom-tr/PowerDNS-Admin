@@ -16,7 +16,7 @@ from ..models.account import Account
 from ..models.setting import Setting
 from ..models.history import History
 from ..models.domain import Domain
-from ..models.record import Record
+from ..models.record import Record, URLRecord
 from ..models.record_entry import RecordEntry
 from ..models.domain_template import DomainTemplate
 from ..models.domain_template_record import DomainTemplateRecord
@@ -63,6 +63,8 @@ def domain(domain_name):
 
     # Query domain's rrsets from PowerDNS API
     rrsets = Record().get_rrsets(domain.name)
+    urls = URLRecord.query.filter_by(domain_id=domain.id).all()
+    for r in urls: rrsets.append(r.serialize)
     current_app.logger.debug("Fetched rrsets: \n{}".format(pretty_json(rrsets)))
 
     # API server might be down, misconfigured

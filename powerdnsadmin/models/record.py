@@ -1,5 +1,8 @@
+from faulthandler import disable
 import re
+import os
 import traceback
+from xml import dom
 import dns.reversename
 import dns.inet
 import dns.name
@@ -7,6 +10,9 @@ from flask import current_app
 from urllib.parse import urljoin
 from distutils.util import strtobool
 from itertools import groupby
+
+from sqlalchemy import true
+from sqlalchemy import event
 
 from .. import utils
 from .base import db
@@ -18,6 +24,89 @@ from .domain_setting import DomainSetting
 def by_record_content_pair(e):
     return e[0]['content']
 
+class URLRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), index=True, unique=True)
+    content = db.Column(db.String(255), index=True)
+    comment = db.Column(db.String(255), index=True)
+    domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
+    disabled = db.Column(db.Boolean, default=False)
+    
+    def __init__(self, id=None, name=None, content=None, comment='', domain_id=None, disabled=False, rr=None) -> None:
+        self.id = id
+        self.domain_id = domain_id
+        self.name =  rr['name'] if rr else name
+        self.content = rr['records'][0]['content'] if rr else content
+        self.comment = rr['comments'][0]['content'] if rr and 'comments' in rr else comment
+        self.disabled = rr['records'][0]['disabled'] if rr else disabled
+        super().__init__()
+    
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'type': 'URL',
+            'ttl': 0,
+            'records': [{
+                'content': self.content, 
+                'disabled': self.disabled
+            }],
+            'comments': [{'content': self.comment, 'account': ''}]
+        }
+    @property
+    def _name(self):
+        return self.name if self.name[-1] != '.' else self.name[:-1]
+    @property
+    def url(self):
+        return self.content if 'http' in self.content else 'https://' + self.content
+NGINX_REDIRECT = """
+server {{
+      listen 80;
+      server_name {};
+      rewrite ^ {}$request_uri? permanent;
+}}
+"""
+@event.listens_for(URLRecord, 'after_insert')   
+def create_nginx_config(mapper, connection, target):
+    """
+    Create a nginx conf in /var/www/html/pdns/powerdnsadmin/nginx.redirect/{domain_name}.conf
+    for each URLRecord
+    """
+    # Check if /var/www/html/pdns/powerdnsadmin/nginx.redirect is exists
+    if not os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/'):
+        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect does not exists')
+    # create the conf file
+    server_name = target._name
+    url = target.url
+    with open('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name), 'w') as f:
+        f.write(NGINX_REDIRECT.format(server_name, url))
+        f.close()
+    
+@event.listens_for(URLRecord, 'after_update')
+def update_nginx_config(mapper, connection, target):
+    """
+    Update a nginx conf in /var/www/html/pdns/powerdnsadmin/nginx.redirect{domain_name}.conf
+    for each URLRecord
+    """
+    # Check if /var/www/html/pdns/powerdnsadmin/nginx.redirect is exists
+    if not os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/'):
+        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect does not exists')
+    # create the conf file
+    with open('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(target._name), 'w') as f:
+        f.write(NGINX_REDIRECT.format(target._name, target.url))
+        f.close()
+        
+@event.listens_for(URLRecord, 'before_delete')
+def del_nginx_config(mapper, connection, target):
+    """
+    Delete redirect config file
+    """
+    server_name = target.name if target.name[-1] != '.' else target.name[:-1]
+    if os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name)):
+        os.remove('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name))
+    else:
+        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf does not exists'.format(server_name))
+    
 
 class Record(object):
     """
@@ -261,6 +350,12 @@ class Record(object):
         current_rrsets = self.get_rrsets(domain_name)
         current_app.logger.debug("current_rrsets_data: \n{}".format(
             utils.pretty_json(current_rrsets)))
+        
+        domain_id = Domain.query.filter_by(name=domain_name).first().id
+        url_redirect = URLRecord.query.filter_by(domain_id=domain_id).all()
+        for url in url_redirect:
+            current_rrsets.append(url.serialize)
+    
 
         # Remove comment's 'modified_at' key
         # PDNS API always return the comments with modified_at
@@ -293,6 +388,20 @@ class Record(object):
         return new_rrsets, del_rrsets
 
     def apply_rrsets(self, domain_name, rrsets):
+        for rr in rrsets['rrsets']:
+            if 'type' in rr and rr['type'] == "URL":
+                try:
+                    domain_id = Domain.query.filter_by(name=domain_name).first().id
+                    if rr['changetype'] == 'DELETE':
+                        url = URLRecord.query.filter_by(domain_id=domain_id, name=rr['name']).first()
+                        db.session.delete(url)
+                        db.session.commit()
+                    else:
+                        url = URLRecord(domain_id=domain_id, rr=rr)
+                        db.session.add(url)
+                except Exception as e:
+                    return {'error': e}
+                return {}
         headers = {'X-API-Key': self.PDNS_API_KEY, 'Content-Type': 'application/json'}
         jdata = utils.fetch_json(urljoin(
             self.PDNS_STATS_URL, self.API_EXTENDED_URL +

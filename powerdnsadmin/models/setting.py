@@ -146,7 +146,8 @@ class Setting(db.Model):
             'TLSA': False,
             'SMIMEA': False,
             'TXT': True,
-            'URI': False
+            'URI': False,
+            'URL': True
         },
         'reverse_records_allow_edit': {
             'A': False,
@@ -184,7 +185,8 @@ class Setting(db.Model):
             'TLSA': False,
             'SMIMEA': False,
             'TXT': True,
-            'URI': False
+            'URI': False,
+            'URL': False
         },
         'ttl_options': '1 minute,5 minutes,30 minutes,60 minutes,24 hours',
         'otp_field_enabled': True,
