@@ -1268,7 +1268,9 @@ def setting_basic():
             'allow_user_create_domain', 'allow_user_remove_domain', 'allow_user_view_history', 'bg_domain_updates', 'site_name',
             'session_timeout', 'warn_session_timeout', 'ttl_options',
             'pdns_api_timeout', 'verify_ssl_connections', 'verify_user_email',
-	          'delete_sso_accounts', 'otp_field_enabled', 'custom_css', 'enable_api_rr_history', 'max_history_records', 'otp_force'
+	          'delete_sso_accounts', 'otp_field_enabled', 'custom_css', 'enable_api_rr_history', 'max_history_records', 'otp_force',
+           # custom url redirects
+           'url_redirect_ip', 'url_redirect_nginx_conf_dir'
         ]
 
         return render_template('admin_setting_basic.html', settings=settings)

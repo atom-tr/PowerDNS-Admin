@@ -59,6 +59,7 @@ class URLRecord(db.Model):
     @property
     def url(self):
         return self.content if 'http' in self.content else 'https://' + self.content
+    
 NGINX_REDIRECT = """
 server {{
       listen 80;
@@ -72,27 +73,27 @@ def create_nginx_config(mapper, connection, target):
     Create a nginx conf in /var/www/html/pdns/powerdnsadmin/nginx.redirect/{domain_name}.conf
     for each URLRecord
     """
+    folder = Setting().get('url_redirect_nginx_conf_dir')
     # Check if /var/www/html/pdns/powerdnsadmin/nginx.redirect is exists
-    if not os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/'):
-        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect does not exists')
+    if not os.path.exists(folder):
+        current_app.logger.error('{} does not exists'.format(folder))
     # create the conf file
-    server_name = target._name
-    url = target.url
-    with open('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name), 'w') as f:
-        f.write(NGINX_REDIRECT.format(server_name, url))
+    with open('folder/{}.conf'.format(folder,target._name), 'w') as f:
+        f.write(NGINX_REDIRECT.format(target._name, target.url))
         f.close()
     
 @event.listens_for(URLRecord, 'after_update')
 def update_nginx_config(mapper, connection, target):
     """
-    Update a nginx conf in /var/www/html/pdns/powerdnsadmin/nginx.redirect{domain_name}.conf
+    Update a nginx conf in folder nginx.redirect/{domain_name}.conf
     for each URLRecord
     """
-    # Check if /var/www/html/pdns/powerdnsadmin/nginx.redirect is exists
-    if not os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/'):
-        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect does not exists')
+    # Check if folder nginx.redirect is exists
+    folder = Setting().get('url_redirect_nginx_conf_dir')
+    if not os.path.exists(folder):
+        current_app.logger.error('{} does not exists'.format(folder))
     # create the conf file
-    with open('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(target._name), 'w') as f:
+    with open('{}/{}.conf'.format(folder, target._name), 'w') as f:
         f.write(NGINX_REDIRECT.format(target._name, target.url))
         f.close()
         
@@ -101,11 +102,12 @@ def del_nginx_config(mapper, connection, target):
     """
     Delete redirect config file
     """
+    folder = Setting().get('url_redirect_nginx_conf_dir')
     server_name = target.name if target.name[-1] != '.' else target.name[:-1]
-    if os.path.exists('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name)):
-        os.remove('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf'.format(server_name))
+    if os.path.exists(folder):
+        os.remove('{}/{}.conf'.format(folder,server_name))
     else:
-        current_app.logger.error('/var/www/html/pdns/powerdnsadmin/nginx.redirect/{}.conf does not exists'.format(server_name))
+        current_app.logger.error('{}/{}.conf does not exists'.format(folder,server_name))
     
 
 class Record(object):
