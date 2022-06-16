@@ -1,48 +1,164 @@
 {% extends "base.html" %}
-{% block title %}<title>{{ domain.name | pretty_domain_name }} - {{ SITE_NAME }}</title>{% endblock %}
-
+{% block title %}<title>{{ domain.name | pretty_domain_name }} - {{ SITE_NAME }}</title>{% endblock title %}
 {% block dashboard_stat %}
-<section class="content-header">
-    <h1>
-        Manage domain: <b>{{ domain.name | pretty_domain_name }}</b>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ url_for('dashboard.dashboard') }}"><i
-                class="fa fa-dashboard"></i> Home</a></li>
-        <li>Domain</li>
-        <li class="active">{{ domain.name | pretty_domain_name }}</li>
-    </ol>
-</section>
-{% endblock %}
-
+    <section class="content-header">
+        <h1>
+            Manage domain: <b>{{ domain.name | pretty_domain_name }}</b>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li>Domain</li>
+            <li class="active">{{ domain.name | pretty_domain_name }}</li>
+        </ol>
+    </section>
+{% endblock dashboard_stat %}
 {% block content %}
-<section class="content">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-body">
-                    {% if domain.type != 'Slave' %}
-                    <button type="button" class="btn btn-flat btn-primary pull-left button_add_record" id="{{ domain.name }}">
-                        Add Record&nbsp;<i class="fa fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-flat btn-primary pull-right button_apply_changes" id="{{ domain.name }}" value="{{ domain.serial }}">
-                        Apply Changes&nbsp;<i class="fa fa-floppy-o"></i>
-                    </button>
-                    {% else %}
-                    <button type="button" class="btn btn-flat btn-primary pull-left button_update_from_master" id="{{ domain.name }}">
-                        Update from Master&nbsp;<i class="fa fa-download"></i>
-                    </button>
-                    {% endif %}
-                    {% if current_user.role.name in ['Administrator', 'Operator'] %}
-                    <button type="button" style="position: relative; margin-left: 20px" class="btn btn-flat btn-primary pull-left btn-danger" onclick="window.location.href='{{ url_for('domain.setting', domain_name=domain.name) }}'">
-                        Admin&nbsp;<i class="fa fa-cog"></i>
-                      </button>
-                    {% endif %}
-                    {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
-                    <button type="button" style="position: relative; margin-left: 20px" class="btn btn-flat btn-primary button_changelog" id="{{ domain.name }}">
-                        Changelog&nbsp;<i class="fa fa-history" aria-hidden="true"></i>
-                    </i>
-                    </button>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                        {% if domain.type != 'Slave' %}
+                            <button type="button"
+                                    class="btn btn-flat btn-primary pull-left button_add_record"
+                                    id="{{ domain.name }}">
+                                Add Record&nbsp;<i class="fa fa-plus"></i>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-flat btn-primary pull-right button_apply_changes"
+                                    id="{{ domain.name }}"
+                                    value="{{ domain.serial }}">
+                                Apply Changes&nbsp;<i class="fa fa-floppy-o"></i>
+                            </button>
+                        {% else %}
+                            <button type="button"
+                                    class="btn btn-flat btn-primary pull-left button_update_from_master"
+                                    id="{{ domain.name }}">
+                                Update from Master&nbsp;<i class="fa fa-download"></i>
+                            </button>
+                        {% endif %}
+                        {% if current_user.role.name in ['Administrator', 'Operator'] %}
+                            <button type="button"
+                                    style="position: relative; margin-left: 20px"
+                                    class="btn btn-flat btn-primary pull-left btn-danger"
+                                    onclick="window.location.href='{{ url_for('domain.setting', domain_name=domain.name) }}'">
+                                Admin&nbsp;<i class="fa fa-cog"></i>
+                            </button>
+                        {% endif %}
+                        <button style="margin-left: 20px;"
+                                    type="button"
+                                    class="btn btn-flat btn-primary pull-left"
+                                    data-toggle="modal"
+                                    data-target="#DomainInfoModal">
+                                InFo&nbsp;<i class="fa fa-users"></i>
+                            </button>
+                            {% if current_user.role.name in ['Administrator', 'Operator'] %}
+                            <form role="form"
+                                  method="post"
+                                  action="{{ url_for('domain.domain', domain_name=domain.name) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                <div id="DomainInfoModal" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h3 class="modal-title">Thông tin khách hàng</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>
+                                                    <div class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label for="custommer_name" class="col-xs-3 control-label">Full Name</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="text"
+                                                                       class="form-control"
+                                                                       id="cus_name"
+                                                                       name="cus_name"
+                                                                       value="{{ domain_info.cus_name }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="custommer_email" class="col-xs-3 control-label">Email Address</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="email"
+                                                                       class="form-control"
+                                                                       id="cus_email"
+                                                                       name="cus_email"
+                                                                       value="{{ domain_info.cus_email }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="cus_phone" class="col-xs-3 control-label">Phone Number</label>
+                                                            <div class="col-xs-9">
+                                                                <input type="tel"
+                                                                       class="form-control"
+                                                                       id="cus_phone"
+                                                                       name="cus_phone"
+                                                                       value="{{ domain_info.cus_phone }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-flat btn-primary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-flat btn-primary">Save Change</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {% else %}
+                            <div id="DomainInfoModal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h3 class="modal-title">Thông tin khách hàng</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                <div class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <label for="custommer_name" class="col-xs-3 control-label">Full Name</label>
+                                                        <div class="col-xs-9">
+                                                           {{ domain_info.cus_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="custommer_email" class="col-xs-3 control-label">Email Address</label>
+                                                        <div class="col-xs-9">
+                                                           {{ domain_info.cus_email }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cus_phone" class="col-xs-3 control-label">Phone Number</label>
+                                                        <div class="col-xs-9">
+                                                           {{ domain_info.cus_phone }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-flat btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
+                            <button type="button"
+                                    style="position: relative; margin-left: 20px"
+                                    class="btn btn-flat btn-primary button_changelog"
+                                    id="{{ domain.name }}">
+                                Changelog&nbsp;<i class="fa fa-history" aria-hidden="true"></i>
+                            </i>
+                        </button>
                     {% endif %}
                 </div>
                 <div class="box-body">
@@ -58,65 +174,67 @@
                                 <th>Edit</th>
                                 <th>Delete</th>
                                 {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
-                                <th >Changelog</th>
+                                    <th >Changelog</th>
                                 {% endif %}
                                 <th>Invisible Sorting Column</th>
                             </tr>
                         </thead>
                         <tbody>
-                                {% for record in records %}
-                                <tr class="odd row_record" id="{{ domain.name }}" 
-                                title="{% if record.type == 'URL' %}URL Redirect{% else %}{{ record.type }}{% endif %}">
-                                    <td>
-                                        {{ (record.name,domain.name) | display_record_name | pretty_domain_name }}
-                                    </td>
-                                    <td>
-                                        {{ record.type }}
-                                    </td>
-                                    <td>
-                                        {{ record.status }}
-                                    </td>
-                                    <td>
-                                        {{ record.ttl }}
-                                    </td>
-                                    <td>
-                                        {{ record.data | pretty_domain_name }}
-                                    </td>
-                                    <td>
-                                        {{ record.comment }}
-                                    </td>
-                                {% if domain.type != 'Slave' %}
-                                    <td width="6%">
-                                        {% if record.is_allowed_edit() %}
-                                            <button type="button" class="btn btn-flat btn-warning button_edit"><i class="fa fa-edit"></i></button>
-                                        {% else %}
-                                            <button type="button" class="btn btn-flat btn-warning">&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i></button>
-                                        {% endif %}
-                                    </td>
-                                    <td width="6%">
-                                        {% if record.is_allowed_delete() %}
-                                            <button type="button" class="btn btn-flat btn-danger button_delete"><i class="fa fa-trash"></i></button>
-                                        {% endif %}
-                                    </td>
-                                {% else %}
-                                    <td width="6%">
-                                        <button type="button" class="btn btn-flat btn-warning">&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;</button>
-                                    </td>
-                                    <td width="6%">
-                                        <button type="button" class="btn btn-flat btn-warning">&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;</button>
-                                    </td>
-                                {% endif %}
+                            {% for record in records %}
+                                <tr class="odd row_record"
+                                    id="{{ domain.name }}"
+                                    title="{% if record.type == 'URL' %}URL Redirect{% else %}{{ record.type }}{% endif %}">
+                                    <td>{{ (record.name,domain.name) | display_record_name | pretty_domain_name }}</td>
+                                    <td>{{ record.type }}</td>
+                                    <td>{{ record.status }}</td>
+                                    <td>{{ record.ttl }}</td>
+                                    <td>{{ record.data | pretty_domain_name }}</td>
+                                    <td>{{ record.comment }}</td>
+                                    {% if domain.type != 'Slave' %}
+                                        <td width="6%">
+                                            {% if record.is_allowed_edit() %}
+                                                <button type="button" class="btn btn-flat btn-warning button_edit">
+                                                    Edit&nbsp;<i class="fa fa-edit"></i>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-flat btn-warning">
+                                                    &nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                        <td width="6%">
+                                            {% if record.is_allowed_delete() %}
+                                                <button type="button" class="btn btn-flat btn-danger button_delete">
+                                                    Delete&nbsp;<i class="fa fa-trash"></i>
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    {% else %}
+                                        <td width="6%">
+                                            <button type="button" class="btn btn-flat btn-warning">
+                                                &nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;
+                                            </button>
+                                        </td>
+                                        <td width="6%">
+                                            <button type="button" class="btn btn-flat btn-warning">
+                                                &nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;
+                                            </button>
+                                        </td>
+                                    {% endif %}
                                     {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
-                                    <td width="6%">
-                                        <button type="button" onclick="show_record_changelog('{{record.name}}','{{record.type}}',event)" class="btn btn-flat btn-primary">&nbsp;
-                                                            <i class="fa fa-history" aria-hidden="true"></i>&nbsp;&nbsp;
-                                        </button>
-                                    </td>
+                                        <td width="6%">
+                                            <button type="button"
+                                                    onclick="show_record_changelog('{{ record.name }}','{{ record.type }}',event)"
+                                                    class="btn btn-flat btn-primary">
+                                                &nbsp;&nbsp;
+                                                <i class="fa fa-history" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;
+                                            </button>
+                                        </td>
                                     {% endif %}
                                     <!-- hidden column that we can sort on -->
                                     <td>1</td>
                                 </tr>
-                                {% endfor %}
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -128,9 +246,9 @@
     </div>
     <!-- /.row -->
 </section>
-{% endblock %}
+{% endblock content %}
 {% block extrascripts %}
-<script>
+    <script>
     // superglobals
     window.records_allow_edit = {{ editable_records | tojson }};
     window.ttl_options = {{ ttl_options | tojson }};
@@ -517,109 +635,131 @@
             var modal = $("#modal_custom_record");
             var form = "    <label for=\"txt_record\">TXT Record Data</label> \
                             <textarea style=\"min-width: 100%;color: #333;\" placeholder=\"Your TXT record data\" rows=\"5\" id=\"txt_record\" name=\"txt_record\">" + txt_data + "</textarea> \
-                       ";
-            modal.find('.modal-body p').html(form);
-            modal.find('#button_save').click(function() {
-                data = modal.find('#txt_record').val();
-                if (! /^".*"$/.test(data)) {
-                    data = '"' + data + '"';
-                }
-                record_data.val(data);
-                modal.modal('hide');
-            });
-            modal.modal('show');
-        } else if (record_type == "LUA") {
-            var lua_type = record_data.val().split(" ")[0];
-            var lua_data = record_data.val().substr(record_data.val().indexOf(" ") + 1).replace(/"/g, '&quot;');
-            var modal = $("#modal_custom_record");
-            var form = "    <label for=\"lua_type\">Lua Record Type</label> \
-                            <input type=\"text\" class=\"form-control\" name=\"lua_type\" id=\"lua_type\" placeholder=\"Initial query type. Example: A, CNAME or PTR \" value=\"" + lua_type + "\"> \
-                            <label for=\"lua_record\">Lua Record Data</label> \
-                            <textarea style=\"min-width: 100%;color: #333;\" placeholder=\"Your LUA snippet\" rows=\"5\" id=\"lua_record\" name=\"lua_record\">" + lua_data + "</textarea> \
-                       ";
-            modal.find('.modal-body p').html(form);
-            modal.find('#button_save').click(function() {
-              type = modal.find('#lua_type').val();
-              data = modal.find('#lua_record').val();
-              if (! /^".*"$/.test(data)) {
-                  data = '"' + data + '"';
-              }
-              data = type + ' ' + data;
-              record_data.val(data);
-              modal.modal('hide');
-            });
-            modal.modal('show');
-        }
-    });
-    {% endif %}
-</script>
-{% endblock %}
+                           ";
+                modal.find('.modal-body p').html(form);
+                modal.find('#button_save').click(function() {
+                    data = modal.find('#txt_record').val();
+                    if (! /^".*"$/.test(data)) {
+                        data = '"' + data + '"';
+                    }
+                    record_data.val(data);
+                    modal.modal('hide');
+                });
+                modal.modal('show');
+            } else if (record_type == "LUA") {
+                var lua_type = record_data.val().split(" ")[0];
+                var lua_data = record_data.val().substr(record_data.val().indexOf(" ") + 1).replace(/"/g, '&quot;');
+                var modal = $("#modal_custom_record");
+                var form = `<label for="lua_type">Lua Record Type</label> 
+                            <input type="text" class="form-control" name="lua_type" id="lua_type" placeholder="Initial query type. Example: A, CNAME or PTR " value="' + lua_type + '"> 
+                            <label for="lua_record">Lua Record Data</label> 
+                            <textarea style="min-width: 100%;color: #333;" placeholder="Your LUA snippet" rows="5" id="lua_record" name="lua_record">' + lua_data + '</textarea>`;
+                modal.find('.modal-body p').html(form);
+                modal.find('#button_save').click(function() {
+                  type = modal.find('#lua_type').val();
+                  data = modal.find('#lua_record').val();
+                  if (! /^".*"$/.test(data)) {
+                      data = '"' + data + '"';
+                  }
+                  data = type + ' ' + data;
+                  record_data.val(data);
+                  modal.modal('hide');
+                });
+                modal.modal('show');
+            }
+        });
+        {% endif %}
+    </script>
+{% endblock extrascripts %}
 {% block modals %}
-<div class="modal fade modal-warning" id="modal_delete">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Confirmation</h4>
+    <div class="modal fade modal-warning" id="modal_delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        Confirmation
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            id="button_delete_cancel"
+                            data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button"
+                            class="btn btn-flat btn-danger"
+                            id="button_delete_confirm">
+                        Delete
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left" id="button_delete_cancel"
-                    data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-danger" id="button_delete_confirm">Delete</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-primary" id="modal_apply_changes">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Confirmation</h4>
+    <div class="modal fade modal-primary" id="modal_apply_changes">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        Confirmation
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button"
+                            class="btn btn-flat btn-primary"
+                            id="button_apply_confirm">
+                        Apply
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left"
-                    data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-primary" id="button_apply_confirm">Apply</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-primary" id="modal_custom_record">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Custom Record</h4>
+    <div class="modal fade modal-primary" id="modal_custom_record">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        Custom Record
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-flat btn-primary" id="button_save">
+                        Save
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-primary" id="button_save">Save</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-{% endblock %}
+{% endblock modals %}

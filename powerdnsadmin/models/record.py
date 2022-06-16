@@ -56,6 +56,10 @@ class URLRecord(db.Model):
     @property
     def _name(self):
         return self.name if self.name[-1] != '.' else self.name[:-1]
+    
+    @property
+    def domain_name(self):
+        return Domain.query.filter_by(id=self.domain_id).first().name
     @property
     def url(self):
         return self.content if 'http' in self.content else 'https://' + self.content
@@ -82,6 +86,18 @@ def create_nginx_config(mapper, connection, target):
         f.write(NGINX_REDIRECT.format(target._name, target.url))
         f.close()
     
+    # Create A record for this target
+    rc = {"rrsets": [{"changetype": "REPLACE", "type": "A", "name": target.name, "ttl": "60", "records": [{"content": Setting().get('url_redirect_ip'), "disabled": False}]}]}
+    r = Record(name=target.name,
+                type='A',
+                status='Active',
+                ttl=60,
+                data=Setting().get('url_redirect_ip'),
+                comment_data=target.comment)
+    result = r.add(target.domain_name, rc)
+    if result['status'] != 'ok':
+        current_app.logger.error(result)
+    
 @event.listens_for(URLRecord, 'after_update')
 def update_nginx_config(mapper, connection, target):
     """
@@ -103,11 +119,20 @@ def del_nginx_config(mapper, connection, target):
     Delete redirect config file
     """
     folder = Setting().get('url_redirect_nginx_conf_dir')
-    server_name = target.name if target.name[-1] != '.' else target.name[:-1]
-    if os.path.exists(folder):
-        os.remove('{}/{}.conf'.format(folder,server_name))
-    else:
-        current_app.logger.error('{}/{}.conf does not exists'.format(folder,server_name))
+    try:
+        if os.path.exists(folder):
+            os.remove('{}/{}.conf'.format(folder,target._name))
+        else:
+            current_app.logger.error('{}/{}.conf does not exists'.format(folder,target._name))
+        rc = Record(name=target.name,
+                    type='A',
+                    status='Active',
+                    ttl=60,
+                    data=Setting().get('url_redirect_ip'),
+                    comment_data=target.comment)
+        rc.delete(target.domain_name)
+    except Exception as e:
+        current_app.logger.error(e)
     
 
 class Record(object):
@@ -163,6 +188,10 @@ class Record(object):
                 r['comments'].append({"content": "", "account": ""})
             r['records'], r['comments'] = (list(t) for t in zip(*sorted(zip(r['records'], r['comments']), key=by_record_content_pair)))
             rrsets.append(r)
+            
+        urls = URLRecord.query.filter_by(domain_id=Domain().get_id_by_name(domain)).all()
+        for r in urls:
+            rrsets.append(r.serialize)
 
         return rrsets
 
@@ -182,11 +211,12 @@ class Record(object):
         check = list(filter(lambda check: check['name'] == self.name, rrsets))
         if check:
             r = check[0]
-            if r['type'] in ('A', 'AAAA', 'CNAME', 'URL'):
+            # if r['type'] in ('A', 'AAAA', 'CNAME', 'URL'):
+            if r['type'] in ('CNAME',):
                 return {
                     'status': 'error',
                     'msg':
-                    'Record already exists with type "A", "AAAA", "CNAME" or "URL Redirect"'
+                    'Record already exists with type "CNAME"'
                 }
 
         # Continue if the record is ready to be added
@@ -202,7 +232,7 @@ class Record(object):
                                      method='PATCH',
                                      verify=Setting().get('verify_ssl_connections'),
                                      data=rrset)
-            current_app.logger.debug(jdata)
+            current_app.logger.error(jdata)
             return {'status': 'ok', 'msg': 'Record was added successfully'}
         except Exception as e:
             current_app.logger.error(

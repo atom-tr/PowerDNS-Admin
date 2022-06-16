@@ -434,6 +434,8 @@ def manage_user():
     if request.method == 'GET':
         roles = Role.query.all()
         users = User.query.order_by(User.username).all()
+        for u in users:
+            u.domain = Domain.query.join(DomainUser).filter(DomainUser.user_id == u.id, DomainUser.domain_id == Domain.id).all()
         return render_template('admin_manage_user.html',
                                users=users,
                                roles=roles)
