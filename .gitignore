@@ -47,3 +47,4 @@ powerdnsadmin/nginx.redirect/*
 backup_db.sql
 pdns.old.sql
 powerdnsadmin/default_config.py
+powerdnsadmin/default_config.py
