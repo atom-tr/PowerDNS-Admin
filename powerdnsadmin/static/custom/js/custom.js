@@ -137,9 +137,9 @@ function editRow(oTable, nRow) {
       ttl_opts += "<option value=\"" + aData[3] + "\">" + sec2str(aData[3]) + "</option>";
     }
     jqTds[0].innerHTML = '<input type="text" id="edit-row-focus" class="form-control input-small" value="' + aData[0] + '">';
-    jqTds[1].innerHTML = '<select class="form-control" id="record_type" name="record_type" value="' + aData[1]  + '">' + record_types + '</select>';
-    jqTds[2].innerHTML = '<select class="form-control" id="record_status" name="record_status" value="' + aData[2]  + '"><option value="false">Active</option><option value="true">Disabled</option></select>';
-    jqTds[3].innerHTML = '<select class="form-control" id="record_ttl" name="record_ttl" value="' + aData[3]  + '">' + ttl_opts + '</select>';
+    jqTds[1].innerHTML = '<select class="form-select" id="record_type" name="record_type" value="' + aData[1]  + '">' + record_types + '</select>';
+    jqTds[2].innerHTML = '<select class="form-select" id="record_status" name="record_status" value="' + aData[2]  + '"><option value="false">Active</option><option value="true">Disabled</option></select>';
+    jqTds[3].innerHTML = '<select class="form-select" id="record_ttl" name="record_ttl" value="' + aData[3]  + '">' + ttl_opts + '</select>';
     jqTds[4].innerHTML = '<input type="text" style="display:table-cell; width:100% !important" id="current_edit_record_data" name="current_edit_record_data" class="form-control input-small advance-data" value="' + aData[4].replace(/\"/g,"&quot;") + '">';
     jqTds[5].innerHTML = '<input type="text" style="display:table-cell; width:100% !important" id="record_comment" name="record_comment" class="form-control input-small advance-data" value="' + aData[5].replace(/\"/g, "&quot;") + '">';
     jqTds[6].innerHTML = '<button type="button" class="btn btn-flat btn-primary button_save">Save</button>';
@@ -192,12 +192,12 @@ function getdnssec(url, domain){
             if (dnssec.length == 0 && parseFloat(PDNS_VERSION) >= 4.1) {
               dnssec_msg = '<h3>DNSSEC is disabled. Click on Enable to activate it.';
               modal.find('.modal-body p').html(dnssec_msg);
-              dnssec_footer = '<button type="button" class="btn btn-flat btn-success button_dnssec_enable pull-left" id="'+domain+'">Enable</button><button type="button" class="btn btn-flat btn-default pull-right" data-dismiss="modal">Cancel</button>';
+              dnssec_footer = '<button type="button" class="btn btn-flat btn-success button_dnssec_enable pull-left" id="'+domain+'">Enable</button><button type="button" class="btn btn-flat btn-default pull-right" data-bs-dismiss="modal">Cancel</button>';
               modal.find('.modal-footer ').html(dnssec_footer);
             }
             else {
                 if (parseFloat(PDNS_VERSION) >= 4.1) {
-                  dnssec_footer = '<button type="button" class="btn btn-flat btn-danger button_dnssec_disable pull-left" id="'+domain+'">Disable DNSSEC</button><button type="button" class="btn btn-flat btn-default pull-right" data-dismiss="modal">Close</button>';
+                  dnssec_footer = '<button type="button" class="btn btn-flat btn-danger button_dnssec_disable pull-left" id="'+domain+'">Disable DNSSEC</button><button type="button" class="btn btn-flat btn-default pull-right" data-bs-dismiss="modal">Close</button>';
                   modal.find('.modal-footer ').html(dnssec_footer);
                 }
                 for (var i = 0; i < dnssec.length; i++) {

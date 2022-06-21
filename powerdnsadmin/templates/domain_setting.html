@@ -31,7 +31,7 @@
 {% block content %}
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <form method="post" action="{{ url_for('domain.setting', domain_name=domain.name) }}">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
@@ -40,7 +40,7 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-xs-2">
+                            <div class="col-sm-2">
                                 <p>Users on the right have access to manage the records in
                                     the {{ domain.name | pretty_domain_name }} domain.</p>
                                 <p>Click on users to move from between columns.</p>
@@ -49,8 +49,8 @@
                                     and already have access to <b>ALL</b> domains.
                                 </p>
                             </div>
-                            <div class="form-group col-xs-2">
-                                <select multiple="multiple" class="form-control" id="domain_multi_user"
+                            <div class="input-group mb-2 col-sm-2">
+                                <select multiple="multiple" class="form-select" id="domain_multi_user"
                                     name="domain_multi_user[]">
                                     {% for user in users %}
                                     <option {% if user.id in
@@ -61,8 +61,8 @@
                             </div>
                         </div>
                         <div class="box-body">
-                            <div class="col-xs-offset-2">
-                                <div class="form-group">
+                            <div class="col-sm-offset-2">
+                                <div class="input-group mb-2">
                                     <button type="submit" class="btn btn-flat btn-primary"><i class="fa fa-check"></i>
                                         Save</button>
                                 </div>
@@ -74,18 +74,18 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Account</h3>
                 </div>
                 <div class="box-body">
-                    <div class="col-xs-12">
-                        <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="input-group mb-2">
                             <form method="post"
                                 action="{{ url_for('domain.change_account', domain_name=domain.name) }}">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                                <select name="accountid" class="form-control" style="width:15em;">
+                                <select name="accountid" class="form-select" style="width:15em;">
                                     <option value="0">- No Account -</option>
                                     {% for account in accounts %}
                                     <option value="{{ account.id }}"
@@ -104,7 +104,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Auto PTR creation</h3>
@@ -123,7 +123,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">DynDNS 2 Settings</h3>
@@ -137,7 +137,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Change Type</h3>
@@ -161,13 +161,13 @@
                     <b>New Domain Type Setting:</b>
                     <form method="post" action="{{ url_for('domain.change_type', domain_name=domain.name) }}">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                        <select name="domain_type" class="form-control" style="width:15em;">
+                        <select name="domain_type" class="form-select" style="width:15em;">
                             <option selected value="0">- Unchanged -</option>
                             <option value="native">Native</option>
                             <option value="master">Master</option>
                             <option value="slave">Slave</option>
                         </select><br />
-                        <div class="form-group" style="display: none;" id="domain_master_address_div">
+                        <div class="input-group mb-2" style="display: none;" id="domain_master_address_div">
                             <input type="text" class="form-control" name="domain_master_address"
                                 id="domain_master_address"
                                 placeholder="Enter valid master ip addresses (separated by commas)">
@@ -181,7 +181,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Change SOA-EDIT-API</h3>
@@ -208,7 +208,7 @@
                     <b>New SOA-EDIT-API Setting:</b>
                     <form method="post" action="{{ url_for('domain.change_soa_edit_api', domain_name=domain.name) }}">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                        <select name="soa_edit_api" class="form-control" style="width:15em;">
+                        <select name="soa_edit_api" class="form-select" style="width:15em;">
                             <option selected value="0">- Unchanged -</option>
                             <option>DEFAULT</option>
                             <option>INCREASE</option>
@@ -224,7 +224,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-12">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Domain Deletion</h3>
@@ -353,16 +353,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
                 <h4 class="modal-title">Confirmation</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-flat btn-default pull-left" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-flat btn-danger" id="button_delete_confirm">
                     Delete</button>
             </div>

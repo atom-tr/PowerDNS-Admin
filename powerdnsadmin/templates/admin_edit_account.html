@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% set active_page = "admin_accounts" %}
-{% block title %}<title>Edit Account - {{ SITE_NAME }}</title>{% endblock %}
+{% block title %}<title>Edit Account - {{ SITE_NAME }}</title>{% endblock title %}
 
 {% block dashboard_stat %}
 <!-- Content Header (Page header) -->
@@ -15,7 +15,7 @@
         <li class="active">{% if create %}Add{% else %}Edit{% endif %} account</li>
     </ol>
 </section>
-{% endblock %}
+{% endblock dashboard_stat %}
 
 {% block content %}
 <section class="content">
@@ -34,19 +34,19 @@
                     <div class="box-body">
                         {% if error %}
                         <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true"></button>
                             <h4><i class="icon fa fa-ban"></i> Error!</h4>
                             {{ error }}
                         </div>
                         <span class="help-block">{{ error }}</span>
                         {% endif %}
                         <div
-                            class="form-group has-feedback {% if invalid_accountname or duplicate_accountname %}has-error{% endif %}">
-                            <label class="control-label" for="accountname">Name</label>
+                            class="input-group mb-2 has-feedback {% if invalid_accountname or duplicate_accountname %}has-error{% endif %}">
+                            <label class="input-group-text" for="accountname">Name</label>
                             <input type="text" class="form-control" placeholder="Account Name (required)"
                                 name="accountname" {% if account %}value="{{ account.name }}" {% endif %}
                                 {% if not create %}disabled{% endif %}>
-                            <span class="fa fa-cog form-control-feedback"></span>
+                            <span class="fa fa-cog form-control-feedback input-group-text"></span>
                             {% if invalid_accountname %}
                             <span class="help-block">Cannot be blank and must only contain alphanumeric
                                 characters.</span>
@@ -54,23 +54,23 @@
                             <span class="help-block">Account name already in use.</span>
                             {% endif %}
                         </div>
-                        <div class="form-group has-feedback">
-                            <label class="control-label" for="accountdescription">Description</label>
+                        <div class="input-group mb-2 has-feedback">
+                            <label class="input-group-text" for="accountdescription">Description</label>
                             <input type="text" class="form-control" placeholder="Account Description (optional)"
                                 name="accountdescription" {% if account %}value="{{ account.description }}" {% endif %}>
-                            <span class="fa fa-industry form-control-feedback"></span>
+                            <span class="fa fa-industry form-control-feedback input-group-text"></span>
                         </div>
-                        <div class="form-group has-feedback">
-                            <label class="control-label" for="accountcontact">Contact Person</label>
+                        <div class="input-group mb-2 has-feedback">
+                            <label class="input-group-text" for="accountcontact">Contact Person</label>
                             <input type="text" class="form-control" placeholder="Contact Person (optional)"
                                 name="accountcontact" {% if account %}value="{{ account.contact }}" {% endif %}>
-                            <span class="fa fa-user form-control-feedback"></span>
+                            <span class="fa fa-user form-control-feedback input-group-text"></span>
                         </div>
-                        <div class="form-group has-feedback">
-                            <label class="control-label" for="accountmail">Mail Address</label>
+                        <div class="input-group mb-2 has-feedback">
+                            <label class="input-group-text" for="accountmail">Mail Address</label>
                             <input type="email" class="form-control" placeholder="Mail Address (optional)"
                                 name="accountmail" {% if account %}value="{{ account.mail }}" {% endif %}>
-                            <span class="fa fa-envelope form-control-feedback"></span>
+                            <span class="fa fa-envelope form-control-feedback input-group-text"></span>
                         </div>
                     </div>
                     <div class="box-header with-border">
@@ -80,7 +80,7 @@
                         <p>Users on the right have access to manage records in all domains
                             associated with the account.</p>
                         <p>Click on users to move between columns.</p>
-                        <div class="form-group col-xs-2">
+                        <div class="input-group mb-2 col-sm-2">
                             <select multiple="multiple" class="form-control" id="account_multi_user"
                                 name="account_multi_user">
                                 {% for user in users %}
@@ -92,7 +92,7 @@
                     </div>
                     <div class="box-footer">
                         <button type="submit"
-                            class="btn btn-flat btn-primary">{% if create %}Create{% else %}Update{% endif %}
+                            class="btn btn-primary">{% if create %}Create{% else %}Update{% endif %}
                             Account</button>
                     </div>
                 </form>
@@ -123,7 +123,7 @@
         </div>
     </div>
 </section>
-{% endblock %}
+{% endblock content %}
 {% block extrascripts %}
 <script>
     $("#account_multi_user").multiSelect({
@@ -162,4 +162,4 @@
         }
     });
 </script>
-{% endblock %}
+{% endblock extrascripts %}

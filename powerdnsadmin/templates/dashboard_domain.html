@@ -1,59 +1,85 @@
 {% macro name(domain) %}
   <a href="{{ url_for('domain.domain', domain_name=domain.name) }}"><strong>{{ domain.name | pretty_domain_name }}</strong></a>
 {% endmacro %}
-
 {% macro dnssec(domain) %}
   {% if domain.dnssec %}
-  <td><span style="cursor:pointer" class="label label-success button_dnssec" id="{{ domain.name }}"><i class="fa fa-lock"></i>&nbsp;Enabled</span></td>
+    <td>
+      <span style="cursor:pointer"
+            class="badge bg-success button_dnssec"
+            id="{{ domain.name }}"><i class="fa fa-lock"></i>&nbsp;Enabled</span>
+    </td>
   {% else %}
-  <td><span style="cursor:pointer" class="label label-primary button_dnssec" id="{{ domain.name }}"><i class="fa fa-unlock-alt"></i>&nbsp;Disabled</span></td>
+    <td>
+      <span style="cursor:pointer"
+            class="badge bg-primary button_dnssec"
+            id="{{ domain.name }}"><i class="fa fa-unlock-alt"></i>&nbsp;Disabled</span>
+    </td>
   {% endif %}
 {% endmacro %}
-
 {% macro type(domain) %}
   {{ domain.type }}
 {% endmacro %}
-
 {% macro serial(domain) %}
-    {% if domain.serial == '0' %}{{ domain.notified_serial }}{% else %}{{ domain.serial }}{% endif %}
+  {% if domain.serial == '0' %}
+    {{ domain.notified_serial }}
+  {% else %}
+    {{ domain.serial }}
+  {% endif %}
 {% endmacro %}
-
 {% macro master(domain) %}
-    {% if domain.master == '[]'%}-{% else %}{{ domain.master | display_master_name }}{% endif %}
+  {% if domain.master == '[]' %}
+    -
+  {% else %}
+    {{ domain.master | display_master_name }}
+  {% endif %}
 {% endmacro %}
-
 {% macro account(domain) %}
-    {% if current_user.role.name in ['Administrator', 'Operator'] %}
-      {{ domain.account.name if domain.account else '-' }}
-    {% endif %}
+  {% if current_user.role.name in ['Administrator', 'Operator'] %}
+    {{ domain.account.name if domain.account else '-' }}
+  {% endif %}
 {% endmacro %}
-
 {% macro actions(domain) %}
   {% if current_user.role.name in ['Administrator', 'Operator'] %}
-    <td width="25%">
-      <button type="button" class="btn btn-flat btn-success button_template" id="{{ domain.name }}">
-        Template&nbsp;<i class="fa fa-clone"></i>
-      </button>
-      <button type="button" class="btn btn-flat btn-success" onclick="window.location.href='{{ url_for('domain.domain', domain_name=domain.name) }}'">
-        Manage&nbsp;<i class="fa fa-cog"></i>
-      </button>
-      <button type="button" class="btn btn-flat btn-danger" onclick="window.location.href='{{ url_for('domain.setting', domain_name=domain.name) }}'">
-        Admin&nbsp;<i class="fa fa-cog"></i>
-      </button>
-      <button type="button" class="btn btn-flat btn-primary" onclick="window.location.href='{{ url_for('domain.changelog', domain_name=domain.name) }}'">
-        Changelog&nbsp;<i class="fa fa-history" aria-hidden="true"></i>
-      </button>
+    <td width="20%">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button"
+                class="btn btn-success button_template btn-show-hover"
+                id="{{ domain.name }}" title="Copy as a Template">
+          <span>Template</span><i class="mx-2 fa fa-clone"></i>
+        </button>
+        <button type="button"
+                class="btn btn-success btn-show-hover"
+                onclick="window.location.href='{{ url_for('domain.domain', domain_name=domain.name) }}'" title="Update DNS Records">
+                <span>Manage</span><i class="mx-2 fa fa-cog"></i>
+        </button>
+        <button type="button"
+                class="btn btn-danger btn-show-hover"
+                onclick="window.location.href='{{ url_for('domain.setting', domain_name=domain.name) }}'" title="Edit domain settings">
+                <span>Admin</span><i class="mx-2 fa fa-cog"></i>
+        </button>
+        <button type="button"
+                class="btn btn-primary btn-show-hover"
+                onclick="window.location.href='{{ url_for('domain.changelog', domain_name=domain.name) }}'" title="View domain Changelog">
+                <span>Changelog</span><i class="mx-2 fa fa-history" aria-hidden="true"></i>
+        </button>
+      </div>
     </td>
-    {% else %}
+  {% else %}
     <td width="6%">
-      <button type="button" class="btn btn-flat btn-success" onclick="window.location.href='{{ url_for('domain.domain', domain_name=domain.name) }}'">
-        Manage&nbsp;<i class="fa fa-cog"></i>
-      </button>
-      {% if allow_user_view_history %}
-      <button type="button" class="btn btn-flat btn-primary" onclick="window.location.href='{{ url_for('domain.changelog', domain_name=domain.name) }}'">
-        Changelog&nbsp;<i class="fa fa-history" aria-hidden="true"></i>
-      </button>
-      {% endif %}
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button"
+                class="btn btn-flat btn-success"
+                onclick="window.location.href='{{ url_for('domain.domain', domain_name=domain.name) }}'">
+          Manage&nbsp;<i class="fa fa-cog"></i>
+        </button>
+        {% if allow_user_view_history %}
+          <button type="button"
+                  class="btn btn-flat btn-primary"
+                  onclick="window.location.href='{{ url_for('domain.changelog', domain_name=domain.name) }}'">
+            Changelog&nbsp;<i class="fa fa-history" aria-hidden="true"></i>
+          </button>
+        {% endif %}
+      </div>
     </td>
-  {% endif %}  
+  {% endif %}
 {% endmacro %}

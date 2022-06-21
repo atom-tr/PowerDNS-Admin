@@ -1,13 +1,12 @@
 
 {% import 'applied_change_macro.html' as applied_change_macro %}
 
-
 {% if len_histories >= lim %}
-<p style="color: rgb(224, 3, 3);"><b>Limit of loaded history records has been reached! Only {{lim}} history records are shown. </b></p>
+<p style="color: rgb(224, 3, 3);"><b>Limit of loaded history records has been reached! Only {{ lim }} history records are shown. </b></p>
 {% endif %}
 
-<div class="box-body"></div>
-    <table id="tbl_history" class="table table-bordered table-striped">
+<div class="box-body">
+    <table id="tbl_history" class="table table-sm table-bordered table-striped">
         <thead>
             <tr>
                 <th>Changed by</th>
@@ -23,7 +22,7 @@
                 <td>{{ history.history.msg }}</td>
                 <td>{{ history.history.created_on }}</td>
                 
-                <td width="6%">
+                <td width="7%">
                     <div id="history-info-div-{{ loop.index0 }}" style="display: none;">
                         {{ history.detailed_msg | safe }}
                         {% if history.change_set %}
@@ -34,7 +33,7 @@
                         </div>
                         {% endif %}
                     </div>
-                    <button type="button" class="btn btn-flat btn-primary history-info-button"
+                    <button type="button" class="btn btn-primary history-info-button"
                         {% if history.detailed_msg == "" and history.change_set is none %}
                         style="visibility: hidden;"
 			{% endif %} value="{{ loop.index0 }}">Info&nbsp;<i class="fa fa-info"></i>

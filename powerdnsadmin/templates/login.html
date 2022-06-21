@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Log In - {{ SITE_NAME }}</title>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <META HTTP-EQUIV="REFRESH" CONTENT="{{ 60 * SETTING.get('session_timeout') }}">
@@ -43,31 +43,32 @@
     <div class="login-box-body">
       {% if error %}
       <div class="alert alert-danger alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true"></button>
         {{ error }}
       </div>
       {% endif %}
       {% if SETTING.get('ldap_enabled') or SETTING.get('local_db_enabled') %}
-      <form action="" method="post" data-toggle="validator">
+      <form action="" method="post" data-bs-toggle="validator">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-        <div class="form-group">
+        <div class="input-group mb-2">
+          <span class="input-group-text" id="basic-addon1">@</span>
           <input type="text" class="form-control" placeholder="Username" name="username"
             data-error="Please input your username" required {% if username %}value="{{ username }}" {% endif %}>
           <span class="help-block with-errors"></span>
         </div>
-        <div class="form-group">
+        <div class="input-group mb-2">
           <input type="password" class="form-control" placeholder="Password" name="password"
             data-error="Please input your password" required {% if password %}value="{{ password }}" {% endif %}>
           <span class="help-block with-errors"></span>
         </div>
         {% if SETTING.get('otp_field_enabled') %}
-        <div class="form-group">
+        <div class="input-group mb-2">
           <input type="otptoken" class="form-control" placeholder="OTP Token" name="otptoken" autocomplete="off">
         </div>
         {% endif %}
         {% if SETTING.get('ldap_enabled') and SETTING.get('local_db_enabled') %}
-        <div class="form-group">
-          <select class="form-control" name="auth_method">
+        <div class="input-group mb-2">
+          <select class="form-select" name="auth_method">
             <option value="LOCAL">LOCAL Authentication</option>
             {% if SETTING.get('login_ldap_first') %}
             <option value="LDAP" selected="selected">LDAP Authentication</option>
@@ -77,21 +78,21 @@
           </select>
         </div>
         {% elif SETTING.get('ldap_enabled') and not SETTING.get('local_db_enabled') %}
-        <div class="form-group">
+        <div class="input-group mb-2">
           <input type="hidden" name="auth_method" value="LDAP">
         </div>
         {% elif SETTING.get('local_db_enabled') and not SETTING.get('ldap_enabled') %}
-        <div class="form-group">
+        <div class="input-group mb-2">
           <input type="hidden" name="auth_method" value="LOCAL">
         </div>
         {% else %}
-        <div class="form-group">
+        <div class="input-group mb-2">
           <input type="hidden" name="auth_method" value="LOCAL">
         </div>
         {% endif %}
 
         <div class="row">
-          <div class="col-xs-8">
+          <div class="col-sm-8">
             <div class="checkbox icheck">
               <label>
                 <input type="checkbox" name="remember"> Remember Me
@@ -99,7 +100,7 @@
             </div>
           </div>
           <!-- /.col -->
-          <div class="col-xs-4">
+          <div class="col-sm-4">
             <button type="submit" class="btn btn-flat btn-primary btn-block">Sign In</button>
           </div>
           <!-- /.col -->

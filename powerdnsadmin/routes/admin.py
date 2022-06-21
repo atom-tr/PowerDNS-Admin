@@ -780,11 +780,11 @@ class DetailedHistory():
 
         elif 'authenticator' in detail_dict: # this is a user authentication
             self.detailed_msg = render_template_string("""
-                <table class="table table-bordered table-striped" style="width:565px;">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th colspan="3" style="background: rgba({{ background_rgba }});">
-                                <p style="color:white;">User {{ username }} authentication {{ auth_result }}</p>
+                            <th class="text-white" colspan="3" style="background: rgba({{ background_rgba }});">
+                                User {{ username }} authentication {{ auth_result }}
                             </th>
                         </tr>
                     </thead>

@@ -1,99 +1,90 @@
 {% extends "base.html" %}
 {% set active_page = "admin_domain_template" %}
-{% block title %}<title>Edit Template - {{ SITE_NAME }}</title>{% endblock %}
-
+{% block title %}
+    <title>Edit Template - {{ SITE_NAME }}</title>
+{% endblock title %}
 {% block dashboard_stat %}
-<section class="content-header">
-    <h1>
-        Edit template <small>{{ template }}</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ url_for('dashboard.dashboard') }}"><i
-                class="fa fa-dashboard"></i> Home</a></li>
-        <li>Templates</li>
-        <li class="active">{{ template }}</li>
-    </ol>
-</section>
-{% endblock %}
-
+    <section class="content-header">
+        <h1>
+            Edit template <small>{{ template }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li>Templates</li>
+            <li class="active">{{ template }}</li>
+        </ol>
+    </section>
+{% endblock dashboard_stat %}
 {% block content %}
-<section class="content">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">Manage Template Records for {{ template }}</h3>
-                </div>
-                <div class="box-body">
-                    <button type="button" class="btn btn-flat btn-primary pull-left button_add_record" id="{{ template }}">
-                        Add Record&nbsp;<i class="fa fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-flat btn-primary pull-right button_apply_changes" id="{{ template }}">
-                        Apply Changes&nbsp;<i class="fa fa-floppy-o"></i>
-                    </button>
-                </div>
-                <div class="box-body">
-                    <table id="tbl_records" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>TTL</th>
-                                <th>Data</th>
-                                <th>Comment</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                                <th>ID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                {% for record in records %}
-                                <tr class="odd row_record">
-                                    <td>
-                                        {{ record.name }}
-                                    </td>
-                                    <td>
-                                        {{ record.type }}
-                                    </td>
-                                    <td>
-                                         {{ record.status }}
-                                    </td>
-                                    <td>
-                                         {{ record.ttl }}
-                                    </td>
-                                    <td>
-                                         {{ record.data }}
-                                    </td>
-                                    <td>
-                                        {{ record.comment }}
-                                    </td>
-                                    <td width="6%">
-                                         <button type="button" class="btn btn-flat btn-warning button_edit">
-                                            Edit&nbsp;<i class="fa fa-edit"></i>
-                                        </button>
-                                    </td>
-                                    <td width="6%">
-                                        <button type="button" class="btn btn-flat btn-danger button_delete">
-                                            Delete&nbsp;<i class="fa fa-trash"></i>
-                                        </button>
-                                    </td>
-                                    <td>
-                                    	{{ record.id }}
-                                    </td>
-                                    </td>
+    <section class="content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Manage Template Records for {{ template }}</h3>
+                    </div>
+                    <div class="box-body">
+                        <button type="button"
+                                class="btn btn-flat btn-primary pull-left button_add_record"
+                                id="{{ template }}">
+                            Add Record&nbsp;<i class="fa fa-plus"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-flat btn-primary pull-right button_apply_changes"
+                                id="{{ template }}">
+                            Apply Changes&nbsp;<i class="fa fa-floppy-o"></i>
+                        </button>
+                    </div>
+                    <div class="box-body">
+                        <table id="tbl_records" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>TTL</th>
+                                    <th>Data</th>
+                                    <th>Comment</th>
+                                    <th colspan="2">Actions</th>
+                                    <th>ID</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                    <tr class="odd row_record">
+                                        <td>{{ record.name }}</td>
+                                        <td>{{ record.type }}</td>
+                                        <td>{{ record.status }}</td>
+                                        <td>{{ record.ttl }}</td>
+                                        <td>{{ record.data }}</td>
+                                        <td>{{ record.comment }}</td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <td width="6%">
+                                                <button type="button" class="btn btn-outline-warning button_edit">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                            </td>
+                                            <td width="6%">
+                                                <button type="button" class="btn btn-outline-danger button_delete">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </div>
+                                        <td>{{ record.id }}</td>
+                                    </tr>
                                 {% endfor %}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-{% endblock %}
+    </section>
+{% endblock content %}
 {% block extrascripts %}
-<script>
+    <script>
     // superglobals
     window.records_allow_edit = {{ editable_records|tojson }};
     window.ttl_options = {{ ttl_options|tojson }};
@@ -408,74 +399,103 @@
         }
     });
     {% endif %}
-</script>
-{% endblock %}
+    </script>
+{% endblock extrascripts %}
 {% block modals %}
-<div class="modal fade modal-warning" id="modal_delete">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Confirmation</h4>
+    <div class="modal fade modal-warning" id="modal_delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Confirmation
+                    </h4>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            id="button_delete_cancel"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button"
+                            class="btn btn-flat btn-danger"
+                            id="button_delete_confirm">
+                        Delete
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left" id="button_delete_cancel"
-                    data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-danger" id="button_delete_confirm">Delete</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-primary" id="modal_apply_changes">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Confirmation</h4>
+    <div class="modal fade modal-primary" id="modal_apply_changes">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Confirmation
+                    </h4>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button"
+                            class="btn btn-flat btn-primary"
+                            id="button_apply_confirm">
+                        Apply
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left"
-                    data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-primary" id="button_apply_confirm">Apply</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-primary" id="modal_custom_record">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Custom Record</h4>
+    <div class="modal fade modal-primary" id="modal_custom_record">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Custom Record
+                    </h4>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-flat btn-primary" id="button_save">
+                        Save
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-primary" id="button_save">Save</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-{% endblock %}
+{% endblock modals %}

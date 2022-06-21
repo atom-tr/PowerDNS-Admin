@@ -1,193 +1,235 @@
 {% extends "base.html" %}
 {% set active_page = "dashboard" %}
-{% block title %}<title>Dashboard - {{ SITE_NAME }}</title>{% endblock %}
-
-
+{% block title %}
+  <title>Dashboard - {{ SITE_NAME }}</title>
+{% endblock title %}
 {% block dashboard_stat %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Dashboard
-        <small>Info</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dashboard</li>
-      </ol>
-    </section>
-{% endblock %}
-
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Dashboard
+      <small>Info</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a>
+      </li>
+      <li class="active">Dashboard</li>
+    </ol>
+  </section>
+{% endblock dashboard_stat %}
 {% import 'applied_change_macro.html' as applied_change_macro %}
-
 {% block content %}
- <!-- Main content -->
-    <section class="content">
-      {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
+  <!-- Main content -->
+  <section class="content">
+    {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
       <div class="row">
-        <div class="col-xs-3">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">Statistics</h3>
-                </div>
-                <div class="box-body">
-                  <div class="row">
-                  <div class="col-lg-6">
-                      <!-- small box -->
-                      <div class="small-box bg-aqua">
-                        <div class="inner">
-                          <h3>{{ domain_count }}</h3>
-                          <p>{% if domain_count > 1 %}Domains{% else %}Domain{% endif %}</p>
-                        </div>
-                        <div class="icon">
-                          <i class="fa fa-book"></i>
-                        </div>
-                      </div>
+        <div class="col-sm-3">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Statistics</h3>
+            </div>
+            <div class="box-body">
+              <div class="row">
+                <div class="col-lg-6">
+                  <!-- small box -->
+                  <div class="small-box bg-aqua">
+                    <div class="inner">
+                      <h3>{{ domain_count }}</h3>
+                      <p>
+                        {% if domain_count > 1 %}
+                          Domains
+                        {% else %}
+                          Domain
+                        {% endif %}
+                      </p>
                     </div>
-                    {% if current_user.role.name in ['Administrator', 'Operator'] %}
-                    <div class="col-lg-6">
-                      <a href="{{ url_for('admin.manage_user') }}">
+                    <div class="icon">
+                      <i class="fa fa-book"></i>
+                    </div>
+                  </div>
+                </div>
+                {% if current_user.role.name in ['Administrator', 'Operator'] %}
+                  <div class="col-lg-6">
+                    <a href="{{ url_for('admin.manage_user') }}">
                       <div class="small-box bg-green">
                         <div class="inner">
                           <h3>{{ user_num }}</h3>
-                          <p>{% if user_num > 1 %}Users{% else %}User{% endif %}</p>
+                          <p>
+                            {% if user_num > 1 %}
+                              Users
+                            {% else %}
+                              User
+                            {% endif %}
+                          </p>
                         </div>
                         <div class="icon">
                           <i class="fa fa-users"></i>
                         </div>
                       </div>
-                      </a>
-                    </div>
-                    {% endif %}
-                    </div>
-                    <div class="row">
-                    <div class="col-lg-6">
-                      <a href="{{ url_for('admin.history') }}">
-                      <div class="small-box bg-green">
-                        <div class="inner">
-                          <h3>{{ history_number }}</h3>
-                          <p>{% if history_number > 1 %}Histories{% else %}History{% endif %}</p>
-                        </div>
-                        <div class="icon">
-                          <i class="fa fa-calendar"></i>
-                        </div>
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <a href="{{ url_for('admin.history') }}">
+                    <div class="small-box bg-green">
+                      <div class="inner">
+                        <h3>{{ history_number }}</h3>
+                        <p>
+                          {% if history_number > 1 %}
+                            Histories
+                          {% else %}
+                            History
+                          {% endif %}
+                        </p>
                       </div>
-                      </a>
+                      <div class="icon">
+                        <i class="fa fa-calendar"></i>
+                      </div>
                     </div>
-                    {% if current_user.role.name in ['Administrator', 'Operator'] %}
-                    <div class="col-lg-6">
-                      <a href="{{ url_for('admin.pdns_stats') }}">
+                  </a>
+                </div>
+                {% if current_user.role.name in ['Administrator', 'Operator'] %}
+                  <div class="col-lg-6">
+                    <a href="{{ url_for('admin.pdns_stats') }}">
                       <div class="small-box bg-green">
                         <div class="inner">
-                          <h3><span style="font-size: 18px">{{ uptime|display_second_to_time }}</span></h3>
+                          <h3>
+                            <span style="font-size: 18px">{{ uptime|display_second_to_time }}</span>
+                          </h3>
                           <p>Uptime</p>
                         </div>
                         <div class="icon">
                           <i class="fa fa-clock-o"></i>
                         </div>
                       </div>
-                      </a>
-                    </div>
-                    {% endif %}
-                    </div>
-                </div>
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
             </div>
+          </div>
         </div>
-        <div class="col-xs-9">
-            <div class="box">
+        <div class="col-sm-9">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Recent History</h3>
+            </div>
+            <div class="box-body">
+              <table id="tbl_history" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Changed By</th>
+                    <th>Content</th>
+                    <th>Time</th>
+                    <th>Detail</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for history in histories %}
+                    <tr class="odd">
+                      <td>{{ history.history.created_by }}</td>
+                      <td>{{ history.history.msg }}</td>
+                      <td>{{ history.history.created_on }}</td>
+                      <td width="10%">
+                        <div id="history-info-div-{{ loop.index0 }}" style="display: none;">
+                          {{ history.detailed_msg | safe }}
+                          {% if history.change_set %}
+                            <div class="content">
+                              <div id="change_index_definition"></div>
+                              {% call applied_change_macro.applied_change_template(history.change_set) %}
+                            {% endcall %}
+                          </div>
+                        {% endif %}
+                      </div>
+                      <button type="button"
+                              class="btn btn-sm btn-outline-primary history-info-button small text-nowrap  btn-show-hover"
+                              {% if history.detailed_msg == "" and history.change_set is none %} style="visibility: hidden;"{% endif %}
+                              value="{{ loop.index0 }}">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                              </svg>
+                        <span>Info</span>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  <!--SYBPATCH START-->
+  <div class="nav-tabs-custom">
+    <ul class="nav nav-tabs nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active"
+           href="#tab_{{ custom_boxes.order[0] }}"
+           data-bs-toggle="tab">Hosted Domains <b>{{ custom_boxes.boxes[custom_boxes.order[0]][0] }}</b></a>
+      </li>
+      {% for boxId in custom_boxes.order[1:] %}
+        <li class="nav-item">
+          <a class="nav-link" href="#tab_{{ boxId }}" data-bs-toggle="tab">Hosted Domains  <b>{{ custom_boxes.boxes[boxId][0] }}</b></a>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="tab-content">
+      {% for boxId in custom_boxes.order %}
+        <div class="tab-pane" id="tab_{{ boxId }}">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Recent History</h3>
+                  <h3 class="box-title">
+                    Hosted Domains  <b>{{ custom_boxes.boxes[boxId][0] }}</b>
+                  </h3>
+                  {% if show_bg_domain_button %}
+                    <button type="button"
+                            class="btn btn-flat btn-primary refresh-bg-button pull-right">
+                      <i class="fa fa-refresh"></i> Sync domains
+                    </button>
+                  {% endif %}
                 </div>
                 <div class="box-body">
-                    <table id="tbl_history" class="table table-bordered table-striped">
+                  <table id="tbl_domain_list_{{ boxId }}"
+                         class="table table-bordered table-striped">
                     <thead>
-                    <tr>
-                      <th>Changed By</th>
-                      <th>Content</th>
-                      <th>Time</th>
-                      <th>Detail</th>
-                    </tr>
+                      <tr>
+                        <th>Name</th>
+                        <th>DNSSEC</th>
+                        <th>Type</th>
+                        <th>Serial</th>
+                        <th>Master</th>
+                        <th>Account</th>
+                        <th {% if current_user.role.name not in ['Administrator','Operator'] %}width="6%"{% else %}width="22%"{% endif %}>
+                          Action
+                        </th>
+                      </tr>
                     </thead>
                     <tbody>
-                    {% for history in histories %}
-                      <tr class="odd">
-                          <td>{{ history.history.created_by }}</td>
-                          <td>{{ history.history.msg }}</td>
-                          <td>{{ history.history.created_on }}</td>
-                          <td width="6%">
-                            <div id="history-info-div-{{ loop.index0 }}" style="display: none;">
-                                {{ history.detailed_msg | safe }}
-                                {% if history.change_set %}
-                                <div class="content">
-                                    <div id="change_index_definition"></div>
-                                    {% call applied_change_macro.applied_change_template(history.change_set) %}
-                                    {% endcall %}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <button type="button" class="btn btn-flat btn-primary history-info-button"
-                                {% if history.detailed_msg == "" and history.change_set is none %}
-                                style="visibility: hidden;"
-                                {% endif %} value="{{ loop.index0 }}">Info&nbsp;<i class="fa fa-info"></i>
-                            </button>
-                          </td>
-                      </tr>
-                    {% endfor %}
                     </tbody>
                   </table>
                 </div>
-            </div>
-        </div>
-      </div>
-      {% endif %}
-
-<!--SYBPATCH START-->
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_{{custom_boxes.order[0]}}" data-toggle="tab">Hosted Domains <b>{{custom_boxes.boxes[custom_boxes.order[0]][0]}}</b></a></li>
-            {% for boxId in custom_boxes.order[1:] %}
-                <li><a href="#tab_{{boxId}}" data-toggle="tab">Hosted Domains  <b>{{custom_boxes.boxes[boxId][0]}}</b></a></li>
-            {% endfor %}
-            </ul>
-            <div class="tab-content">
-            {% for boxId in custom_boxes.order %}
-              <div class="tab-pane" id='tab_{{boxId}}'>
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">Hosted Domains  <b>{{custom_boxes.boxes[boxId][0]}}</b></h3>{% if show_bg_domain_button %}<button type="button" class="btn btn-flat btn-primary refresh-bg-button pull-right"><i class="fa fa-refresh"></i> Sync domains </button>{% endif %}
-                        </div>
-                        <div class="box-body">
-                          <table id='tbl_domain_list_{{boxId}}' class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>DNSSEC</th>
-                              <th>Type</th>
-                              <th>Serial</th>
-                              <th>Master</th>
-                              <th>Account</th>
-                              <th {% if current_user.role.name not in ['Administrator','Operator'] %}width="6%"{% else %}width="25%"{% endif %}>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
               </div>
-            {% endfor %}
-            </div><!-- /.tab-content -->
-        </div><!-- custom tabs -->
-<!--SYBPATCH END-->
-
-    </section>
-    <!-- /.content -->
-{% endblock %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- /.tab-content -->
+  </div>
+  <!-- custom tabs -->
+  <!--SYBPATCH END-->
+</section>
+<!-- /.content -->
+{% endblock content %}
 {% block extrascripts %}
-<script>
+  <script>
 //SYBPATCH START//
     function setUpDomainList(id ,url){
         $(id).DataTable({
@@ -217,7 +259,7 @@
           "pageLength": {{ SETTING.get('default_domain_table_size') }}
         });
     }
-    $('#tab_{{custom_boxes.order[0]}}').addClass( "active" );
+    $('#tab_{{ custom_boxes.order[0] }}').addClass( "active" );
     {% for boxId in custom_boxes.order %}
     setUpDomainList("#tbl_domain_list_{{boxId}}", "{{url_for('dashboard.domains_custom',boxId=boxId)}}");
     {% endfor %}
@@ -272,10 +314,10 @@
             data['domain'] = modal.find('#domain').val();
             applyChanges(data, "{{ url_for('admin.create_template_from_zone') }}", true);
             modal.modal('hide');
-        })
+        });
         modal.find('#button_close').click(function() {
             modal.modal('hide');
-        })
+        });
 
         modal.modal('show');
     });
@@ -298,101 +340,130 @@
 
     });
     {% endif %}
-</script>
-{% endblock %}
+  </script>
+{% endblock extrascripts %}
 {% block modals %}
-<div class="modal fade" id="modal_history_info">
+  <div class="modal fade"
+       id="modal_history_info"
+       tabindex="-1"
+       aria-labelledby="modal_history_Label"
+       aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">History Details</h4>
-            </div>
-            <div class="modal-body">
-              <div id="modal-info-content"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-right"
-                    data-dismiss="modal">Close</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            History Details
+          </h4>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+          </button>
         </div>
-        <!-- /.modal-content -->
+        <div class="modal-body">
+          <div id="modal-info-content">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-primary" id="modal_template">
+  </div>
+  <div class="modal fade modal-primary" id="modal_template">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Clone to template</h4>
-            </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left"
-                    id="button_close" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-primary" id="button_save">Save</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            Clone to template
+          </h4>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+          </button>
         </div>
-        <!-- /.modal-content -->
+        <div class="modal-body">
+          <p>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-flat btn-default pull-left"
+                  id="button_close"
+                  data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="button" class="btn btn-flat btn-primary" id="button_save">
+            Save
+          </button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<div class="modal fade" id="modal_dnssec_info">
+  </div>
+  <!-- /.modal -->
+  <div class="modal fade" id="modal_dnssec_info">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">DNSSEC</h4>
-            </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-right"
-                    data-dismiss="modal">Close</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            DNSSEC
+          </h4>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+          </button>
         </div>
-        <!-- /.modal-content -->
+        <div class="modal-body">
+          <p>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<div class="modal fade" id="modal_bg_reload">
+  </div>
+  <!-- /.modal -->
+  <div class="modal fade" id="modal_bg_reload">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Sync domains from nameserver</h4>
-            </div>
-            <div class="modal-body">
-
-                <div class="overlay">
-                  <div id="modal_bg_reload_content"><i class="fa fa-refresh fa-spin"></i> Update in progress ..</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-right"
-                    data-dismiss="modal">Close</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            Sync domains from nameserver
+          </h4>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+          </button>
         </div>
-        <!-- /.modal-content -->
+        <div class="modal-body">
+          <div class="overlay">
+            <div id="modal_bg_reload_content">
+              <i class="fa fa-refresh fa-spin"></i> Update in progress ..
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
-{% endblock %}
+  </div>
+{% endblock modals %}

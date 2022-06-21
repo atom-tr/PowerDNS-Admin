@@ -21,7 +21,7 @@ css_login = Bundle('node_modules/bootstrap/dist/css/bootstrap.css',
                    output='generated/login.css')
 
 js_login = Bundle('node_modules/jquery/dist/jquery.js',
-                  'node_modules/bootstrap/dist/js/bootstrap.js',
+                  'node_modules/bootstrap/dist/js/bootstrap.bundle.js',
                   'node_modules/icheck/icheck.js',
                   'custom/js/custom.js',
                   filters=(ConcatFilter, 'jsmin'),
@@ -46,7 +46,7 @@ css_main = Bundle(
 
 js_main = Bundle('node_modules/jquery/dist/jquery.js',
                  'node_modules/jquery-ui-dist/jquery-ui.js',
-                 'node_modules/bootstrap/dist/js/bootstrap.js',
+                 'node_modules/bootstrap/dist/js/bootstrap.bundle.js',
                  'node_modules/datatables.net/js/jquery.dataTables.js',
                  'node_modules/datatables.net-bs/js/dataTables.bootstrap.js',
                  'node_modules/jquery-sparkline/jquery.sparkline.js',
