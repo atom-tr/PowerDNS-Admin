@@ -5,7 +5,9 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-      {% block title %}<title>{{ SITE_NAME }}</title>{% endblock title %}
+      {% block title %}
+        <title>{{ SITE_NAME }}</title>
+      {% endblock title %}
       <link rel="stylesheet"
             href="{{ url_for('static', filename='assets/css/style.css') }}">
       <!--  Get Google Fonts we like -->
@@ -40,53 +42,7 @@
   <![endif]-->
     {% endblock head %}
     <style>
-    a {
-      text-decoration: none
-    }
-    table.dataTable thead th {
-      position: relative;
-      background-image: none !important;
-  }
-    
-  table.dataTable thead th.sorting:after,
-  table.dataTable thead th.sorting_asc:after,
-  table.dataTable thead th.sorting_desc:after {
-      position: absolute !important;
-      right: 8px !important;
-      display: block !important;
-      font-family: FontAwesome !important;
-  }
-  table.dataTable thead th.sorting:after {
-      content: "\f0dc" !important;
-      color: #ddd !important;
-      font-size: 0.8em !important;
-  }
-  table.dataTable thead th.sorting_asc:after {
-      content: "\f106" !important;
-  }
-  table.dataTable thead th.sorting_desc:after {
-      content: "\f107" !important;
-  }
-  .btn-show-hover > span {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-    white-space: nowrap;
-    max-width: 0;
-    transition: max-width 0.2s ease-out;
-    margin-left: -4px;
-  }
-  .btn-show-hover > span::before {
-    content: "";
-    margin-left: 4px;
-  }
-  .btn-show-hover:hover > span,
-  .btn-show-hover:active > span {
-    max-width: 300px;
-    transition: max-width 0.5s ease-in;
-  }
+    a { text-decoration: none } table.dataTable thead th { position: relative; background-image: none !important; } table.dataTable thead th.sorting:after, table.dataTable thead th.sorting_asc:after, table.dataTable thead th.sorting_desc:after { position: absolute !important; right: 8px !important; display: block !important; font-family: FontAwesome !important; } table.dataTable thead th.sorting:after { content: "\f0dc" !important; color: #ddd !important; font-size: 0.8em !important; } table.dataTable thead th.sorting_asc:after { content: "\f106" !important; } table.dataTable thead th.sorting_desc:after { content: "\f107" !important; } .btn-show-hover > span { margin: 0; padding: 0; display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap; max-width: 0; transition: max-width 0.2s ease-out; margin-left: -4px; } .btn-show-hover > span::before { content: ""; margin-left: 4px; } .btn-show-hover:hover > span, .btn-show-hover:active > span { max-width: 300px; transition: max-width 0.5s ease-in; }
     </style>
   </head>
   <body class="hold-transition skin-blue sidebar-mini {% if not SETTING.get('fullscreen_layout') %}layout-boxed{% endif %}">
@@ -108,10 +64,7 @@
           <!-- Header Navbar: style can be found in header.less -->
           <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
-            <a href="#"
-               class="sidebar-toggle"
-               data-toggle="push-menu"
-               role="button">
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
               <span class="sr-only">Toggle navigation</span>
             </a>
             <div class="navbar-custom-menu">
@@ -234,7 +187,9 @@
                   </ul>
                 </li>
               {% elif SETTING.get('allow_user_view_history') %}
-                <li class="header">ADMINISTRATION</li>
+                <li class="header">
+                  ADMINISTRATION
+                </li>
                 <li class="{{ 'active' if active_page == 'admin_history' else '' }}">
                   <a href="{{ url_for('admin.history') }}"><i class="fa fa-calendar"></i> <span>History</span></a>
                 </li>
@@ -388,16 +343,25 @@
         {% endif %}
       {%- endassets %}
     {% endblock scripts %}
-    {% block extrascripts %}{% endblock extrascripts %}
+    {% block extrascripts %}
+    {% endblock extrascripts %}
     {% block defaultmodals %}
-      <div class="modal fade modal-danger" id="modal_error" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+      <div class="modal fade modal-danger"
+           id="modal_error"
+           tabindex="-1"
+           aria-labelledby="errorModalLabel"
+           aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
               <h4 class="modal-title">
                 Error
               </h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close">
+              </button>
             </div>
             <div class="modal-body">
               <p>
@@ -423,7 +387,11 @@
               <h4 class="modal-title">
                 Success
               </h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close">
+              </button>
             </div>
             <div class="modal-body">
               <p>

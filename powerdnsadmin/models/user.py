@@ -2,9 +2,11 @@ import os
 import base64
 import traceback
 import bcrypt
+import hashlib
 import pyotp
 import ldap
 import ldap.filter
+from passlib.hash import des_crypt
 from flask import current_app
 from flask_login import AnonymousUserMixin
 from sqlalchemy import orm
@@ -108,7 +110,12 @@ class User(db.Model):
     def check_password(self, hashed_password):
         # Check hashed password. Using bcrypt, the salt is saved into the hash itself
         if (self.plain_text_password):
-            return bcrypt.checkpw(self.plain_text_password.encode('utf-8'),
+            md5_pass = hashlib.md5(self.plain_text_password.encode("utf-8")).hexdigest()
+            sha256_pass = des_crypt.hash(self.plain_text_password, salt ='du')
+            if md5_pass==hashed_password or sha256_pass==hashed_password:
+                return True
+            else:
+                return bcrypt.checkpw(self.plain_text_password.encode('utf-8'),
                                   hashed_password.encode('utf-8'))
         return False
 

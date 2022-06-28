@@ -1,107 +1,124 @@
 {% extends "base.html" %}
 {% set active_page = "admin_users" %}
-{% block title %}
-<title>User Management - {{ SITE_NAME }}</title>
-{% endblock %} {% block dashboard_stat %}
-<section class="content-header">
-    <h1>
-        User <small>Manage user privileges</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">User</li>
-    </ol>
-</section>
-{% endblock %} {% block content %}
-<section class="content">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">User Management</h3>
-                </div>
-                <div class="box-body">
-                    <a href="{{ url_for('admin.edit_user') }}">
-                        <button type="button" class="btn btn-flat btn-primary pull-left button_add_user">
-                            Add User&nbsp;<i class="fa fa-plus"></i>
-                        </button>
-                    </a>
-                </div>
-                <div class="box-body">
-                    <table id="tbl_users" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Users</th>
-                                <th>Role</th>
-                                <th>Privileges</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users %}
-                            <tr class="odd gradeX">
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.firstname }}</td>
-                                <td>{{ user.lastname }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>
-                                {% if user.role.name=='Administrator' %}
-                                all
-                                {% else %}
-                                {% for u in user.domain %}
-                                {{u.name}}
-                                <br>
+{% block title %}<title>User Management - {{ SITE_NAME }}</title>{% endblock title %}
+{% block dashboard_stat %}
+    <section class="content-header">
+        <h1>
+            User <small>Manage user privileges</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('dashboard.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li class="active">User</li>
+        </ol>
+    </section>
+{% endblock dashboard_stat %}
+{% block content %}
+    <section class="content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">User Management</h3>
+                    </div>
+                    <div class="box-body">
+                        <a href="{{ url_for('admin.edit_user') }}">
+                            <button type="button"
+                                    class="btn btn-flat btn-primary pull-left button_add_user">
+                                Add User&nbsp;<i class="fa fa-plus"></i>
+                            </button>
+                        </a>
+                    </div>
+                    <div class="box-body">
+                        <table id="tbl_users" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Domains</th>
+                                    <th>Role</th>
+                                    <th>Privileges</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr class="odd gradeX">
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.firstname }}</td>
+                                        <td>{{ user.lastname }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            <ul id="collapse-list" class="list-group list-group-flush">
+                                            {% if user.role.name=='Administrator' %}
+                                                <li class="list-group-item bg-transparent">ALL</li>
+                                            {% elif user.domain %}
+                                                {% for u in user.domain %}
+                                                    <li class="list-group-item bg-transparent py-1">{{ u.name }}</li>
+                                                {% endfor %}
+                                                {% if user.domain|length > 3 %}
+                                                    <button id="toggle-collapse" class="small list-group-item bg-transparent py-0"></button>
+                                                {% endif %}
+                                            {% endif %}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <select id="{{ user.username }}"
+                                                    class="user_role"
+                                                    {% if user.username==current_user.username or (current_user.role.name=='Operator' and user.role.name=='Administrator') %}disabled{% endif %}>
+                                                {% for role in roles %}
+                                                    <option value="{{ role.name }}"
+                                                            {% if role.id==user.role.id %}selected{% endif %}>
+                                                        {% if role.name=='Administrator' %}
+                                                            Admin
+                                                        {% else %}
+                                                            {{ role.name }}
+                                                        {% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td width="6%">
+                                            <button type="button"
+                                                    class="btn btn-flat btn-warning button_revoke"
+                                                    id="{{ user.username }}"
+                                                    {% if current_user.role.name=='Operator' and user.role.name=='Administrator' %}disabled{% endif %}>
+                                                Revoke&nbsp;<i class="fa fa-lock"></i>
+                                            </button>
+                                        </td>
+                                        <td width="15%">
+                                            <button type="button"
+                                                    class="btn btn-outline-success button_edit"
+                                                    onclick="window.location.href='{{ url_for('admin.edit_user', user_username=user.username) }}'"
+                                                    {% if current_user.role.name=='Operator' and user.role.name=='Administrator' %}disabled{% endif %}>
+                                                Edit<i class="ms-1 fa fa-lock"></i>
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-outline-danger button_delete"
+                                                    id="{{ user.username }}"
+                                                    {% if user.username==current_user.username or (current_user.role.name=='Operator' and user.role.name=='Administrator') %}disabled{% endif %}>
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
-                                {% endif %}
-                                </td>
-                                <td>
-                                    <select id="{{ user.username }}" class="user_role"
-                                        {% if user.username==current_user.username or (current_user.role.name=='Operator' and user.role.name=='Administrator') %}disabled{% endif %}>
-                                        {% for role in roles %}
-                                        <option value="{{ role.name }}"
-                                            {% if role.id==user.role.id %}selected{% endif %}>{{ role.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td width="6%">
-                                    <button type="button" class="btn btn-flat btn-warning button_revoke"
-                                        id="{{ user.username }}"
-                                        {% if current_user.role.name=='Operator' and user.role.name=='Administrator' %}disabled{% endif %}>
-                                        Revoke&nbsp;<i class="fa fa-lock"></i>
-                                    </button>
-                                </td>
-                                <td width="15%">
-                                    <button type="button" class="btn btn-flat btn-success button_edit"
-                                        onclick="window.location.href='{{ url_for('admin.edit_user', user_username=user.username) }}'"
-                                        {% if current_user.role.name=='Operator' and user.role.name=='Administrator' %}disabled{% endif %}>
-                                        Edit&nbsp;<i class="fa fa-lock"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-flat btn-danger button_delete"
-                                        id="{{ user.username }}"
-                                        {% if user.username==current_user.username or (current_user.role.name=='Operator' and user.role.name=='Administrator') %}disabled{% endif %}>
-                                        Delete&nbsp;<i class="fa fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
                 </div>
-                <!-- /.box-body -->
+                <!-- /.box -->
             </div>
-            <!-- /.box -->
+            <!-- /.col -->
         </div>
-        <!-- /.col -->
-    </div>
-    <!-- /.row -->
-</section>
-{% endblock %}
+        <!-- /.row -->
+    </section>
+{% endblock content %}
 {% block extrascripts %}
-<script>
+    <script>
     // set up user data table
     $("#tbl_users").DataTable({
         "paging": true,
@@ -168,45 +185,87 @@
         };
         applyChanges(postdata, $SCRIPT_ROOT + '/admin/manage-user', showResult = true);
     });
-</script>
-{% endblock %}
+    </script>
+
+    <script>
+        var toggleStatus = true;
+        var hideElements = function(){
+            $('#collapse-list li').each(function(i){
+                if(i > 2){
+                    $(this).slideToggle(200);
+                }
+            });
+            $('#toggle-collapse').text('more..');
+            console.log(toggleStatus);
+            toggleStatus = !toggleStatus;
+            if(toggleStatus) {
+                $('#toggle-collapse').text('less..');
+            }
+        };
+        
+        hideElements();
+        $('#toggle-collapse').click(function(){
+            if(toggleStatus){
+                $('#collapse-list .list-group-item:not(:visible)').slideToggle(200);
+                var toggleStatus = false;
+            } else {
+                hideElements();
+            }
+            //toggleStatus = !toggleStatus;
+        });
+    </script>
+{% endblock extrascripts %}
 {% block modals %}
-<div class="modal fade modal-warning" id="modal_revoke">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Confirmation</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade modal-warning" id="modal_revoke">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmation</h4>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            data-bs-dismiss="modal">Close</button>
+                    <button type="button"
+                            class="btn btn-flat btn-danger"
+                            id="button_revoke_confirm">Revoke</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-danger" id="button_revoke_confirm">Revoke</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-<div class="modal fade modal-warning" id="modal_delete">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Confirmation</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade modal-warning" id="modal_delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmation</h4>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-flat btn-default pull-left"
+                            data-bs-dismiss="modal">Close</button>
+                    <button type="button"
+                            class="btn btn-flat btn-danger"
+                            id="button_delete_confirm">Delete</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-flat btn-default pull-left" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-flat btn-danger" id="button_delete_confirm">Delete</button>
-            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
-{% endblock %}
+{% endblock modals %}

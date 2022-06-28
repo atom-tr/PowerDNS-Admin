@@ -18,6 +18,7 @@ pytz==2020.1
 cssmin==0.2.0
 jsmin==3.0.0
 Authlib==0.15
+passlib==1.7.4
 Flask-SeaSurf==0.2.2
 bravado-core==5.17.0
 lima==0.5
