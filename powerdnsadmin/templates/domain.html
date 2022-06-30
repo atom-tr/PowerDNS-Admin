@@ -49,8 +49,8 @@
                             </button>
                             <button type="button"
                                     class="btn btn-primary pull-left ms-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#DomainInfoModal">
+                                    data-toggle="modal"
+                                    data-target="#DomainInfoModal">
                                 InFo&nbsp;<i class="fa fa-users"></i>
                             </button>
                         {% endif %}
@@ -588,15 +588,19 @@
                     } else if (record_type == "URL") {
                         var url_data = record_data.val().replace(/"/g, '&quot;');
                         var modal = $("#modal_custom_record");
-                        var form = `<div class="form-floating">
-                        <label for="txt_record">URL redirect Data</label> 
-                                        <textarea style="min-width: 100%;
-                                                         color: #333;"
-                                                  placeholder="Your URL redirect target"
-                                                  rows="2"
-                                                  id="url_record"
-                                                  name="url_record">` + url_data + `</textarea> 
-                               </div>`;
+                        var form = `
+                        <div class="alert alert-warning" role="alert">
+                            A simple warning alert—check it out!
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control" style="min-width: 100%;
+                                                color: #333;"
+                                        placeholder="Your URL redirect target"
+                                        rows="2"
+                                        id="url_record"
+                                        name="url_record">` + url_data + `</textarea> 
+                            <label for="url_record">URL redirect Data</label> 
+                        </div>`;
                     modal.find('.modal-body p').html(form);
                     modal.find('#button_save').click(function() {
                         data = modal.find('#url_record').val();
@@ -682,7 +686,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div class="modal fade modal-primary" id="modal_custom_record">
+    <div class="modal fade" id="modal_custom_record">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -730,7 +734,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-horizontal">
-                            <form role="form"
+                            <form id="domain_info_form" role="form"
                                   method="post"
                                   action="{{ url_for('domain.domain', domain_name=domain.name) }}">
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
@@ -777,7 +781,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" form="domain_info_form">
                             Save Change
                         </button>
                     </div>

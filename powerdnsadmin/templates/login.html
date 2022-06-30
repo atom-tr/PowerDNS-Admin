@@ -48,7 +48,7 @@
       </div>
       {% endif %}
       {% if SETTING.get('ldap_enabled') or SETTING.get('local_db_enabled') %}
-      <form action="" method="post" data-bs-toggle="validator">
+      <form action="" method="post" data-toggle="validator">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="input-group mb-2">
           <span class="input-group-text" id="basic-addon1">@</span>

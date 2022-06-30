@@ -31,8 +31,7 @@
         <link rel="stylesheet" href="{{ ASSET_URL }}">
       {%- endassets %}
       {% if SETTING.get('custom_css') %}
-        <link rel="stylesheet"
-              href="/static/custom/{{ SETTING.get('custom_css') }}">
+        <link rel="stylesheet" href="/static/custom/{{ SETTING.get('custom_css') }}">
       {% endif %}
       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
       <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,7 +41,7 @@
   <![endif]-->
     {% endblock head %}
     <style>
-    a { text-decoration: none } table.dataTable thead th { position: relative; background-image: none !important; } table.dataTable thead th.sorting:after, table.dataTable thead th.sorting_asc:after, table.dataTable thead th.sorting_desc:after { position: absolute !important; right: 8px !important; display: block !important; font-family: FontAwesome !important; } table.dataTable thead th.sorting:after { content: "\f0dc" !important; color: #ddd !important; font-size: 0.8em !important; } table.dataTable thead th.sorting_asc:after { content: "\f106" !important; } table.dataTable thead th.sorting_desc:after { content: "\f107" !important; } .btn-show-hover > span { margin: 0; padding: 0; display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap; max-width: 0; transition: max-width 0.2s ease-out; margin-left: -4px; } .btn-show-hover > span::before { content: ""; margin-left: 4px; } .btn-show-hover:hover > span, .btn-show-hover:active > span { max-width: 300px; transition: max-width 0.5s ease-in; }
+    a { text-decoration: none }  .btn-show-hover > span { margin: 0; padding: 0; display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap; max-width: 0; transition: max-width 0.2s ease-out; margin-left: -4px; } .btn-show-hover > span::before { content: ""; margin-left: 4px; } .btn-show-hover:hover > span, .btn-show-hover:active > span { max-width: 300px; transition: max-width 0.5s ease-in; }
     </style>
   </head>
   <body class="hold-transition skin-blue sidebar-mini {% if not SETTING.get('fullscreen_layout') %}layout-boxed{% endif %}">
@@ -75,7 +74,7 @@
                     <a href="#"
                        class="dropdown-toggle "
                        id="user-menu"
-                       data-bs-toggle="dropdown">
+                       data-toggle="dropdown">
                       <img src="{{ gravatar_url }}"
                            class="user-image {{ 'offline' if OFFLINE_MODE }}"
                            alt="User Image"/>

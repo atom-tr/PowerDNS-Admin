@@ -40,7 +40,7 @@ if errors %}
 	{% endif %} {% endwith %}
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-5">
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<h3 class="box-title">Create new template</h3>
@@ -50,14 +50,16 @@ if errors %}
 				<form role="form" method="post" action="{{ url_for('admin.create_template') }}">
 					<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 					<div class="box-body">
-						<div class="input-group mb-2">
+						<div class="form-floating mb-3">
 							<input type="text" class="form-control" name="name" id="name"
 								placeholder="Enter a valid template name (required)">
-						</div>
-						<div class="input-group mb-2">
+							<label for="floatingInput">Enter a valid template name (required)</label>
+						  </div>
+						  <div class="form-floating mb-3">
 							<input type="text" class="form-control" name="description" id="description"
-								placeholder="Enter a template description (optional)">
-						</div>
+							placeholder="Enter a template description (optional)">
+							  <label for="floatingInput">Enter a template description (optional)</label>
+							</div>
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-flat btn-primary">Submit</button>
@@ -68,7 +70,7 @@ if errors %}
 			</div>
 			<!-- /.box -->
 		</div>
-		<div class="col-md-8">
+		<div class="col-md-7">
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<h3 class="box-title">Help with creating a new template</h3>

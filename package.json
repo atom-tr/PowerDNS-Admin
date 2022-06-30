@@ -3,7 +3,6 @@
     "admin-lte": "2.4.9",
     "bootstrap": "^v5.2.0-beta1",
     "jquery": "^3.6.0",
-    "popper.js": "^2.11.5",
     "bootstrap-datepicker": "^1.8.0",
     "bootstrap-validator": "^0.11.9",
     "datatables.net-plugins": "^1.11.5",

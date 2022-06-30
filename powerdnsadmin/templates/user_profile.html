@@ -26,13 +26,13 @@
                     <!-- Custom Tabs -->
                     <div class="nav-tabs-custom" id="tabs">
                         <ul class="nav nav-pills nav-tabs">
-                            <li class="nav-item"><a class="nav-link active" href="#tabs-personal" data-bs-toggle="tab">Personal
+                            <li class="nav-item"><a class="nav-link active" href="#tabs-personal" data-toggle="tab">Personal
                                     Info</a></li>
                             {% if session['authentication_type'] == 'LOCAL' %}
-                            <li class="nav-item"><a class="nav-link" href="#tabs-password" data-bs-toggle="tab">Change Password</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#tabs-password" data-toggle="tab">Change Password</a></li>
                             {% endif %}
                             {% if session['authentication_type'] in ['LOCAL', 'LDAP'] %}
-                            <li class="nav-item"><a class="nav-link" href="#tabs-authentication" data-bs-toggle="tab">Authentication</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#tabs-authentication" data-toggle="tab">Authentication</a></li>
                             {% endif %}
                         </ul>
                         <div class="tab-content">
