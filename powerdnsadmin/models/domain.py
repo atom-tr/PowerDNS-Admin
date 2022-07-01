@@ -12,7 +12,9 @@ from .user import User
 from .account import Account
 from .account import AccountUser
 from .domain_user import DomainUser
+from .domain_info import DomainInfo
 from .domain_setting import DomainSetting
+from .url_redirect import URLRecord
 from .history import History
 
 
@@ -530,7 +532,7 @@ class Domain(db.Model):
         if domain_setting:
             domain_setting.delete()
         domain.apikeys[:] = []
-
+        
         # Remove history for domain
         domain_history = History.query.filter(
             History.domain_id == domain.id
@@ -538,6 +540,18 @@ class Domain(db.Model):
         if domain_history:
            domain_history.delete()
 
+        # Remove additional information for domain
+        domain_info = DomainInfo.query.filter(
+            DomainInfo.domain_id == domain.id
+        )
+        if domain_info:
+            domain_info.delete()
+        # Remove custom URL rediection for domain  
+        url_redirect = URLRecord.query.filter(
+            URLRecord.domain_id == domain.id
+        )
+        if url_redirect:
+            url_redirect.delete()
         # then remove domain
         Domain.query.filter(Domain.name == domain_name).delete()
         if do_commit:

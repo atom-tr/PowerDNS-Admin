@@ -49,8 +49,8 @@
                             </button>
                             <button type="button"
                                     class="btn btn-primary pull-left ms-2"
-                                    data-toggle="modal"
-                                    data-target="#DomainInfoModal">
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#DomainInfoModal">
                                 InFo&nbsp;<i class="fa fa-users"></i>
                             </button>
                         {% endif %}
@@ -68,11 +68,11 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Type</th>
-                                <th>Status</th>
-                                <th>TTL</th>
-                                <th>Data</th>
-                                <th>Comment</th>
+                                <th width="10%">Type</th>
+                                <th width="8%">Status</th>
+                                <th width="6%">TTL</th>
+                                <th width="30%">Data</th>
+                                <th width="30%">Comment</th>
                                 <th colspan="2">Actions</th>
                                 {% if current_user.role.name in ['Administrator', 'Operator'] or SETTING.get('allow_user_view_history') %}
                                     <th >Changelog</th>

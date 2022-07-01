@@ -591,8 +591,9 @@ def delete(domain_name):
     result = d.delete(domain_name)
 
     info = DomainInfo.query.filter(domain_id == domain_id).first()
-    db.session.delete(info)
-    db.session.commit()
+    if info:
+        db.session.delete(info)
+        db.session.commit()
 
     if result['status'] == 'error':
         abort(500)

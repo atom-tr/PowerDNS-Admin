@@ -170,11 +170,11 @@
       <li class="nav-item">
         <a class="nav-link active"
            href="#tab_{{ custom_boxes.order[0] }}"
-           data-toggle="tab">Hosted Domains <b>{{ custom_boxes.boxes[custom_boxes.order[0]][0] }}</b></a>
+           data-bs-toggle="tab">Hosted Domains <b>{{ custom_boxes.boxes[custom_boxes.order[0]][0] }}</b></a>
       </li>
       {% for boxId in custom_boxes.order[1:] %}
         <li class="nav-item">
-          <a class="nav-link" href="#tab_{{ boxId }}" data-toggle="tab">Hosted Domains  <b>{{ custom_boxes.boxes[boxId][0] }}</b></a>
+          <a class="nav-link" href="#tab_{{ boxId }}" data-bs-toggle="tab">Hosted Domains  <b>{{ custom_boxes.boxes[boxId][0] }}</b></a>
         </li>
       {% endfor %}
     </ul>

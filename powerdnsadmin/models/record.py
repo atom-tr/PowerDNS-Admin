@@ -11,129 +11,16 @@ from urllib.parse import urljoin
 from distutils.util import strtobool
 from itertools import groupby
 
-from sqlalchemy import true
-from sqlalchemy import event
-
 from .. import utils
 from .base import db
 from .setting import Setting
-from .domain import Domain
 from .domain_setting import DomainSetting
-
+from .url_redirect import URLRecord
+from .domain import Domain
 
 def by_record_content_pair(e):
     return e[0]['content']
-
-class URLRecord(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), index=True, unique=True)
-    content = db.Column(db.String(255), index=True)
-    comment = db.Column(db.String(255), index=True)
-    domain_id = db.Column(db.Integer, db.ForeignKey('domain.id'))
-    disabled = db.Column(db.Boolean, default=False)
-    
-    def __init__(self, id=None, name=None, content=None, comment='', domain_id=None, disabled=False, rr=None) -> None:
-        self.id = id
-        self.domain_id = domain_id
-        self.name =  rr['name'] if rr else name
-        self.content = rr['records'][0]['content'] if rr else content
-        self.comment = rr['comments'][0]['content'] if rr and 'comments' in rr else comment
-        self.disabled = rr['records'][0]['disabled'] if rr else disabled
-        super().__init__()
-    
-    @property
-    def serialize(self):
-        return {
-            'name': self.name,
-            'type': 'URL',
-            'ttl': 300,
-            'records': [{
-                'content': self.content, 
-                'disabled': self.disabled
-            }],
-            'comments': [{'content': self.comment, 'account': ''}]
-        }
-    @property
-    def _name(self):
-        return self.name if self.name[-1] != '.' else self.name[:-1]
-    
-    @property
-    def domain_name(self):
-        return Domain.query.filter_by(id=self.domain_id).first().name
-    @property
-    def url(self):
-        return self.content if 'http' in self.content else 'https://' + self.content
-    
-NGINX_REDIRECT = """
-server {{
-      listen 80;
-      server_name {};
-      rewrite ^ {}$request_uri? permanent;
-}}
-"""
-@event.listens_for(URLRecord, 'after_insert')   
-def create_nginx_config(mapper, connection, target):
-    """
-    Create a nginx conf in /var/www/html/pdns/powerdnsadmin/nginx.redirect/{domain_name}.conf
-    for each URLRecord
-    """
-    folder = Setting().get('url_redirect_nginx_conf_dir')
-    # Check if /var/www/html/pdns/powerdnsadmin/nginx.redirect is exists
-    if not os.path.exists(folder):
-        current_app.logger.error('{} does not exists'.format(folder))
-    # create the conf file
-    with open('{}/{}.conf'.format(folder,target._name), 'w') as f:
-        f.write(NGINX_REDIRECT.format(target._name, target.url))
-        f.close()
-    
-    # Create A record for this target
-    rc = {"rrsets": [{"changetype": "REPLACE", "type": "A", "name": target.name, "ttl": "60", "records": [{"content": Setting().get('url_redirect_ip'), "disabled": False}]}]}
-    r = Record(name=target.name,
-                type='A',
-                status='Active',
-                ttl=60,
-                data=Setting().get('url_redirect_ip'),
-                comment_data=target.comment)
-    result = r.add(target.domain_name, rc)
-    if result['status'] != 'ok':
-        current_app.logger.error(result)
-    
-@event.listens_for(URLRecord, 'after_update')
-def update_nginx_config(mapper, connection, target):
-    """
-    Update a nginx conf in folder nginx.redirect/{domain_name}.conf
-    for each URLRecord
-    """
-    # Check if folder nginx.redirect is exists
-    folder = Setting().get('url_redirect_nginx_conf_dir')
-    if not os.path.exists(folder):
-        current_app.logger.error('{} does not exists'.format(folder))
-    # create the conf file
-    with open('{}/{}.conf'.format(folder, target._name), 'w') as f:
-        f.write(NGINX_REDIRECT.format(target._name, target.url))
-        f.close()
-        
-@event.listens_for(URLRecord, 'before_delete')
-def del_nginx_config(mapper, connection, target):
-    """
-    Delete redirect config file
-    """
-    folder = Setting().get('url_redirect_nginx_conf_dir')
-    try:
-        if os.path.exists(folder):
-            os.remove('{}/{}.conf'.format(folder,target._name))
-        else:
-            current_app.logger.error('{}/{}.conf does not exists'.format(folder,target._name))
-        rc = Record(name=target.name,
-                    type='A',
-                    status='Active',
-                    ttl=60,
-                    data=Setting().get('url_redirect_ip'),
-                    comment_data=target.comment)
-        rc.delete(target.domain_name)
-    except Exception as e:
-        current_app.logger.error(e)
-    
+  
 
 class Record(object):
     """
