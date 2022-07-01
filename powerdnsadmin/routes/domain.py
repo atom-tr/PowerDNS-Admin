@@ -10,6 +10,7 @@ from flask_login import login_required, current_user, login_manager
 
 from ..lib.utils import pretty_domain_name
 from ..lib.utils import pretty_json
+from ..lib.utils import to_idna
 from ..decorators import can_create_domain, operator_role_required, can_access_domain, can_configure_dnssec, can_remove_domain
 from ..models.user import User, Anonymous
 from ..models.account import Account
@@ -31,7 +32,6 @@ domain_bp = Blueprint('domain',
                       __name__,
                       template_folder='templates',
                       url_prefix='/domain')
-
 
 @domain_bp.before_request
 def before_request():
@@ -416,6 +416,9 @@ def add():
                     'errors/400.html',
                     msg="Please enter a valid domain name"), 400
 
+            if domain_name.endswith('.'):
+                domain_name = domain_name[:-1]
+
             # If User creates the domain, check some additional stuff
             if current_user.role.name not in ['Administrator', 'Operator']:
                 # Get all the account_ids of the user
@@ -431,7 +434,7 @@ def add():
 
             # Encode domain name into punycode (IDN)
             try:
-                domain_name = domain_name.encode('idna').decode()
+                domain_name = to_idna(domain_name, 'encode')
             except:
                 current_app.logger.error(
                     "Cannot encode the domain name {}".format(domain_name))
@@ -453,6 +456,38 @@ def add():
             account_name = Account().get_name_by_id(account_id)
 
             d = Domain()
+
+            ### Test if a record same as the domain already exists in an upper level domain
+            if Setting().get('deny_domain_override'):
+
+                upper_domain = None
+                domain_override = False
+                domain_override_toggle = False
+
+                if current_user.role.name in ['Administrator', 'Operator']:
+                    domain_override = request.form.get('domain_override')
+                    domain_override_toggle = True
+
+
+                # If overriding box is not selected.
+                # False = Do not allow ovrriding, perform checks
+                # True = Allow overriding, do not perform checks
+                if not domain_override:
+                    upper_domain = d.is_overriding(domain_name)
+
+                if upper_domain:
+                    if current_user.role.name in ['Administrator', 'Operator']:
+                        accounts = Account.query.order_by(Account.name).all()
+                    else:
+                        accounts = current_user.get_accounts()
+                    
+                    msg = 'Domain already exists as a record under domain: {}'.format(upper_domain)
+                    
+                    return render_template('domain_add.html', 
+                                            domain_override_message=msg,
+                                            accounts=accounts,
+                                            domain_override_toggle=domain_override_toggle)
+           
             result = d.add(domain_name=domain_name,
                            domain_type=domain_type,
                            soa_edit_api=soa_edit_api,
@@ -534,14 +569,17 @@ def add():
 
     # Get
     else:
+        domain_override_toggle = False
         # Admins and Operators can set to any account
         if current_user.role.name in ['Administrator', 'Operator']:
             accounts = Account.query.order_by(Account.name).all()
+            domain_override_toggle = True
         else:
             accounts = current_user.get_accounts()
         return render_template('domain_add.html',
                                templates=templates,
-                               accounts=accounts)
+                               accounts=accounts,
+                               domain_override_toggle=domain_override_toggle)
 
 
 @domain_bp.route('/setting/<path:domain_name>/delete', methods=['POST'])

@@ -10,7 +10,7 @@ from yaml import Loader, load
 from flask import Blueprint, render_template, make_response, url_for, current_app, g, session, request, redirect, abort
 from flask_login import login_user, logout_user, login_required, current_user
 
-from .base import login_manager
+from .base import csrf, login_manager
 from ..lib import utils
 from ..decorators import dyndns_login_required
 from ..models.base import db
@@ -323,15 +323,15 @@ def login():
                             # Regexp didn't match, continue to next iteration
                             continue
 
-                    account = Account()
-                    account_id = account.get_id_by_name(account_name=group_name)
+                    sanitized_group_name = Account.sanitize_name(group_name)
+                    account_id = account.get_id_by_name(account_name=sanitized_group_name)
 
                     if account_id:
                         account = Account.query.get(account_id)
                         # check if user has permissions
                         account_users = account.get_user()
                         current_app.logger.info('Group: {} Users: {}'.format(
-                            group_name, 
+                            group_name,
                             account_users))
                         if user.id in account_users:
                             current_app.logger.info('User id {} is already in account {}'.format(
@@ -345,13 +345,15 @@ def login():
                             current_app.logger.info('User {} added to Account {}'.format(
                                 user.username, account.name))
                     else:
-                        account.name = group_name
-                        account.description = group_description
-                        account.contact = ''
-                        account.mail = ''
+                        account = Account(
+                            name=sanitized_group_name,
+                            description=group_description,
+                            contact='',
+                            mail=''
+                        )
                         account.create_account()
                         history = History(msg='Create account {0}'.format(
-                            account.name), 
+                            account.name),
                             created_by='System')
                         history.add()
 
@@ -401,7 +403,7 @@ def login():
             if name_prop in me and desc_prop in me:
                 accounts_name_prop = [me[name_prop]] if type(me[name_prop]) is not list else me[name_prop]
                 accounts_desc_prop = [me[desc_prop]] if type(me[desc_prop]) is not list else me[desc_prop]
-		
+
                 #Run on all groups the user is in by the index num.
                 for i in range(len(accounts_name_prop)):
                     description = ''
@@ -411,7 +413,7 @@ def login():
 
                     account_to_add.append(account)
                 user_accounts = user.get_accounts()
-                
+
 		# Add accounts
                 for account in account_to_add:
                     if account not in user_accounts:
@@ -485,13 +487,13 @@ def login():
                                        saml_enabled=SAML_ENABLED,
                                        error='Token required')
 
-        if Setting().get('autoprovisioning') and auth_method!='LOCAL': 
+        if Setting().get('autoprovisioning') and auth_method!='LOCAL':
             urn_value=Setting().get('urn_value')
             Entitlements=user.read_entitlements(Setting().get('autoprovisioning_attribute'))
             if len(Entitlements)==0 and Setting().get('purge'):
                 user.set_role("User")
                 user.revoke_privilege(True)
-                
+
             elif len(Entitlements)!=0:
                 if checkForPDAEntries(Entitlements, urn_value):
                     user.updateUser(Entitlements)
@@ -761,6 +763,7 @@ def resend_confirmation_email():
 
 
 @index_bp.route('/nic/checkip.html', methods=['GET', 'POST'])
+@csrf.exempt
 def dyndns_checkip():
     # This route covers the default ddclient 'web' setting for the checkip service
     return render_template('dyndns.html',
@@ -769,6 +772,7 @@ def dyndns_checkip():
 
 
 @index_bp.route('/nic/update', methods=['GET', 'POST'])
+@csrf.exempt
 @dyndns_login_required
 def dyndns_update():
     # dyndns protocol response codes in use are:
@@ -836,7 +840,7 @@ def dyndns_update():
 
     remote_addr = utils.validate_ipaddress(
         request.headers.get('X-Forwarded-For',
-                            request.remote_addr).split(', ')[:1])
+                            request.remote_addr).split(', ')[0])
 
     response = 'nochg'
     for ip in myip_addr or remote_addr:
@@ -959,6 +963,7 @@ def saml_metadata():
 
 
 @index_bp.route('/saml/authorized', methods=['GET', 'POST'])
+@csrf.exempt
 def saml_authorized():
     errors = []
     if not current_app.config.get('SAML_ENABLED'):
@@ -1007,6 +1012,8 @@ def saml_authorized():
         group_attribute_name = current_app.config.get('SAML_ATTRIBUTE_GROUP',
                                                       None)
         admin_group_name = current_app.config.get('SAML_GROUP_ADMIN_NAME',
+                                                  None)
+        operator_group_name = current_app.config.get('SAML_GROUP_OPERATOR_NAME',
                                                   None)
         group_to_account_mapping = create_group_to_account_mapping()
 
@@ -1061,6 +1068,8 @@ def saml_authorized():
             uplift_to_admin(user)
         elif admin_group_name in user_groups:
             uplift_to_admin(user)
+        elif operator_group_name in user_groups:
+            uplift_to_operator(user)
         elif admin_attribute_name or group_attribute_name:
             if user.role.name != 'User':
                 user.role_id = Role.query.filter_by(name='User').first().id
@@ -1088,14 +1097,10 @@ def create_group_to_account_mapping():
 
 
 def handle_account(account_name, account_description=""):
-    clean_name = ''.join(c for c in account_name.lower()
-                         if c in "abcdefghijklmnopqrstuvwxyz0123456789")
-    if len(clean_name) > Account.name.type.length:
-        current_app.logger.error(
-            "Account name {0} too long. Truncated.".format(clean_name))
+    clean_name = Account.sanitize_name(account_name)
     account = Account.query.filter_by(name=clean_name).first()
     if not account:
-        account = Account(name=clean_name.lower(),
+        account = Account(name=clean_name,
                           description=account_description,
                           contact='',
                           mail='')
@@ -1113,6 +1118,14 @@ def uplift_to_admin(user):
     if user.role.name != 'Administrator':
         user.role_id = Role.query.filter_by(name='Administrator').first().id
         history = History(msg='Promoting {0} to administrator'.format(
+            user.username),
+                          created_by='SAML Assertion')
+        history.add()
+
+def uplift_to_operator(user):
+    if user.role.name != 'Operator':
+        user.role_id = Role.query.filter_by(name='Operator').first().id
+        history = History(msg='Promoting {0} to operator'.format(
             user.username),
                           created_by='SAML Assertion')
         history.add()

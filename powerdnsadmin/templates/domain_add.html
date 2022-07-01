@@ -20,25 +20,50 @@
     </section>
 {% endblock %}
 {% block content %}
-    <section class="content">
-        <div class="row">
-            <div class="col-md-5">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Create new domain</h3>
-                    </div>
-                    <!-- /.box-header -->
-                    <!-- form start -->
-                    <form role="form" method="post" action="{{ url_for('domain.add') }}">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                        <div class="box-body">
-                            <div class="input-group mb-2">
-                                <input type="text"
-                                       class="form-control"
-                                       name="domain_name"
-                                       id="domain_name"
-                                       placeholder="Enter a valid domain name (required)"
-                                       required>
+<section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Create new domain</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form role="form" method="post" action="{{ url_for('domain.add') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="domain_name" id="domain_name"
+                                placeholder="Enter a valid domain name (required)">
+                        </div>
+                        {% if domain_override_toggle == True %}
+                        <div class="form-group">
+                            <label>Domain Override Record</label>
+                            <input type="checkbox" id="domain_override" name="domain_override"
+                                class="checkbox">
+                        </div>
+                        {% endif %}
+                        <select name="accountid" class="form-control" style="width:15em;">
+                            <option value="0">- No Account -</option>
+                            {% for account in accounts %}
+                            <option value="{{ account.id }}">{{ account.name }}</option>
+                            {% endfor %}
+                        </select><br />
+                        <div class="form-group">
+                            <label>Type</label>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="radio_type" id="radio_type_native" value="native" checked>
+                                    Native
+                                </label>
+                                &nbsp;&nbsp;&nbsp;
+                                <label>
+                                    <input type="radio" name="radio_type" id="radio_type_master" value="master"> Master
+                                </label>
+                                &nbsp;&nbsp;&nbsp;
+                                <label>
+                                    <input type="radio" name="radio_type" id="radio_type_slave" value="slave">Slave
+                                </label>
                             </div>
                             <div class="input-group mb-2">
                                 <input type="text"
@@ -252,4 +277,38 @@
         }
     });
     </script>
+{% endblock %}
+{% block modals %}
+<script>
+{% if domain_override_message %}
+    $(document.body).ready(function () {
+        var modal = $("#modal_warning");
+        var info = "{{ domain_override_message }}";
+        modal.find('.modal-body p').text(info);
+        modal.modal('show');
+    });
+{% endif %}
+</script>
+</div>
+<div class="modal fade" id="modal_warning">
+  <div class="modal-dialog">
+      <div class="modal-content modal-sm">
+          <div class="modal-header alert-danger">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="button_close_warn_modal">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">WARNING</h4>
+          </div>
+          <div class="modal-body">
+              <p></p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-flat btn-primary center-block" data-dismiss="modal" id="button_confirm_warn_modal">
+                  CLOSE</button>
+          </div>
+      </div>
+      <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 {% endblock %}
