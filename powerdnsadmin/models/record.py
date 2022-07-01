@@ -313,8 +313,9 @@ class Record(object):
                     domain_id = Domain.query.filter_by(name=domain_name).first().id
                     if rr['changetype'] == 'DELETE':
                         url = URLRecord.query.filter_by(domain_id=domain_id, name=rr['name']).first()
-                        db.session.delete(url)
-                        db.session.commit()
+                        if url:
+                            db.session.delete(url)
+                            db.session.commit()
                     else:
                         url = URLRecord(domain_id=domain_id, rr=rr)
                         db.session.add(url)
