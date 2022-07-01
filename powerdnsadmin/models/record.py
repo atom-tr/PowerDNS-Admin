@@ -317,8 +317,15 @@ class Record(object):
                             db.session.delete(url)
                             db.session.commit()
                     else:
-                        url = URLRecord(domain_id=domain_id, rr=rr)
-                        db.session.add(url)
+                        url = URLRecord.query.filter_by(domain_id=domain_id, name=rr['name']).first()
+                        if url: 
+                            url.content = rr['records'][0]['content'] if 'content' in rr['records'][0] else ''
+                            url.comment = rr['comments'][0]['comments'] if 'comments' in rr else ''
+                            url.disabled = rr['comments'][0]['disabled'] if 'comments' in rr else False
+                            db.session.commit()
+                        else:
+                            url = URLRecord(domain_id=domain_id, rr=rr)
+                            db.session.add(url)
                 except Exception as e:
                     return {'error': e}
                 return {}

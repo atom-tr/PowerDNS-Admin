@@ -642,9 +642,9 @@
                     modal.find('.modal-body p').html(form);
                     modal.find('#button_save').click(function() {
                         data = modal.find('#url_record').val();
-                        if (! /^".*"$/.test(data)) {
-                            data = '"' + data + '"';
-                        }
+                        //if (! /^".*"$/.test(data)) {
+                        //    data = '"' + data + '"';
+                        //}
                         record_data.val(data);
                         modal.modal('hide');
                     });
