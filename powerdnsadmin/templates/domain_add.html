@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% set active_page = "new_domain" %}
-{% block title %}<title>Add Domain - {{ SITE_NAME }}</title>{% endblock %}
+{% block title %}<title>Add Domain - {{ SITE_NAME }}</title>{% endblock title %}
 {% block dashboard_stat %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -18,7 +18,7 @@
             <li class="active">Add Domain</li>
         </ol>
     </section>
-{% endblock %}
+{% endblock dashboard_stat %}
 {% block content %}
 <section class="content">
     <div class="row">
@@ -36,35 +36,7 @@
                             <input type="text" class="form-control" name="domain_name" id="domain_name"
                                 placeholder="Enter a valid domain name (required)">
                         </div>
-                        {% if domain_override_toggle == True %}
                         <div class="form-group">
-                            <label>Domain Override Record</label>
-                            <input type="checkbox" id="domain_override" name="domain_override"
-                                class="checkbox">
-                        </div>
-                        {% endif %}
-                        <select name="accountid" class="form-control" style="width:15em;">
-                            <option value="0">- No Account -</option>
-                            {% for account in accounts %}
-                            <option value="{{ account.id }}">{{ account.name }}</option>
-                            {% endfor %}
-                        </select><br />
-                        <div class="form-group">
-                            <label>Type</label>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="radio_type" id="radio_type_native" value="native" checked>
-                                    Native
-                                </label>
-                                &nbsp;&nbsp;&nbsp;
-                                <label>
-                                    <input type="radio" name="radio_type" id="radio_type_master" value="master"> Master
-                                </label>
-                                &nbsp;&nbsp;&nbsp;
-                                <label>
-                                    <input type="radio" name="radio_type" id="radio_type_slave" value="slave">Slave
-                                </label>
-                            </div>
                             <div class="input-group mb-2">
                                 <input type="text"
                                        class="form-control"
@@ -89,6 +61,14 @@
                                        placeholder="Phone Number (required)"
                                        required>
                             </div>
+                            <br>
+                            {% if domain_override_toggle == True %}
+                            <div class="form-check">
+                                <input type="checkbox" id="domain_override" name="domain_override"
+                                    class="form-check-input">
+                                <label class="form-check-label" for="domain_override">Domain Override Record</label>
+                            </div>
+                            {% endif %}
                             <select name="accountid" class="form-select" style="width:15em;">
                                 <option value="0">
                                     - No Account -
@@ -277,7 +257,7 @@
         }
     });
     </script>
-{% endblock %}
+{% endblock extrascripts %}
 {% block modals %}
 <script>
 {% if domain_override_message %}
