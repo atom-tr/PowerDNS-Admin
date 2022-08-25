@@ -585,71 +585,83 @@
                                    ";
                         modal.find('.modal-body p').html(form);
                         modal.find('#button_save').click(function() {
-                            data = modal.find('#txt_record').val();
-                            if (! /^".*"$/.test(data)) {
+                            data = modal.find('#txt_record').val().replace(/"/g, '');
+                            if ( data.length > 254) {
+                            // split the data into 2 parts for DKIM 2048
+                                var data1 = data.substring(0, 254);
+                                var data2 = data.substring(254);
+                                
+                                if (! /^".*"$/.test(data1)) {
+                                    data1 = '"' + data1 + '"';
+                                }
+                                if (! /^".*"$/.test(data2)) {
+                                    data2 = '"' + data2 + '"';
+                                }
+                                data = data1 + " " + data2;
+                            } else if (! /^".*"$/.test(data)) {
                                 data = '"' + data + '"';
                             }
                             record_data.val(data);
                             modal.modal('hide');
                         });
                         modal.modal('show');
-                    } else if (record_type == "LUA") {
-                        var lua_type = record_data.val().split(" ")[0];
-                        var lua_data = record_data.val().substr(record_data.val().indexOf(" ") + 1).replace(/"/g, '&quot;');
-                        var modal = $("#modal_custom_record");
-                        var form = `<label for="lua_type">Lua Record Type</label> 
-                                    <input type="text"
-                                           class="form-control"
-                                           name="lua_type"
-                                           id="lua_type"
-                                           placeholder="Initial query type. Example: A, CNAME or PTR "
-                                           value="' + lua_type + '"> 
-                                    <label for="lua_record">Lua Record Data</label> 
-                                    <textarea style="min-width: 100%;
-                                                     color: #333;"
-                                              placeholder="Your LUA snippet"
-                                              rows="5"
-                                              id="lua_record"
-                                              name="lua_record">' + lua_data + '</textarea>`;
-                        modal.find('.modal-body p').html(form);
-                        modal.find('#button_save').click(function() {
-                          type = modal.find('#lua_type').val();
-                          data = modal.find('#lua_record').val();
-                          if (! /^".*"$/.test(data)) {
-                              data = '"' + data + '"';
-                          }
-                          data = type + ' ' + data;
-                          record_data.val(data);
-                          modal.modal('hide');
-                        });
-                        modal.modal('show');
-                    } else if (record_type == "URL") {
-                        var url_data = record_data.val().replace(/"/g, '&quot;');
-                        var modal = $("#modal_custom_record");
-                        var form = `
-                        <div class="alert alert-warning" role="alert">
-                            Adding a URL record will replace or delete all A records with same zone and name.
-                        </div>
-                        <div class="form-floating">
-                            <textarea class="form-control" style="min-width: 100%;
+            } else if (record_type == "LUA") {
+                var lua_type = record_data.val().split(" ")[0];
+                var lua_data = record_data.val().substr(record_data.val().indexOf(" ") + 1).replace(/"/g, '&quot;');
+                var modal = $("#modal_custom_record");
+                var form = `<label for="lua_type">Lua Record Type</label> 
+                            <input type="text"
+                                    class="form-control"
+                                    name="lua_type"
+                                    id="lua_type"
+                                    placeholder="Initial query type. Example: A, CNAME or PTR "
+                                    value="' + lua_type + '"> 
+                            <label for="lua_record">Lua Record Data</label> 
+                            <textarea style="min-width: 100%;
                                                 color: #333;"
-                                        placeholder="Your URL redirect target"
-                                        rows="2"
-                                        id="url_record"
-                                        name="url_record">` + url_data + `</textarea> 
-                            <label for="url_record">URL redirect Data</label> 
-                        </div>`;
-                    modal.find('.modal-body p').html(form);
-                    modal.find('#button_save').click(function() {
-                        data = modal.find('#url_record').val();
-                        //if (! /^".*"$/.test(data)) {
-                        //    data = '"' + data + '"';
-                        //}
-                        record_data.val(data);
-                        modal.modal('hide');
-                    });
-                    modal.modal('show');
-                }
+                                        placeholder="Your LUA snippet"
+                                        rows="5"
+                                        id="lua_record"
+                                        name="lua_record">' + lua_data + '</textarea>`;
+                modal.find('.modal-body p').html(form);
+                modal.find('#button_save').click(function() {
+                    type = modal.find('#lua_type').val();
+                    data = modal.find('#lua_record').val();
+                    if (! /^".*"$/.test(data)) {
+                        data = '"' + data + '"';
+                    }
+                    data = type + ' ' + data;
+                    record_data.val(data);
+                    modal.modal('hide');
+                });
+                modal.modal('show');
+            } else if (record_type == "URL") {
+                var url_data = record_data.val().replace(/"/g, '&quot;');
+                var modal = $("#modal_custom_record");
+                var form = `
+                <div class="alert alert-warning" role="alert">
+                    Adding a URL record will replace or delete all A records with same zone and name.
+                </div>
+                <div class="form-floating">
+                    <textarea class="form-control" style="min-width: 100%;
+                                        color: #333;"
+                                placeholder="Your URL redirect target"
+                                rows="2"
+                                id="url_record"
+                                name="url_record">` + url_data + `</textarea> 
+                    <label for="url_record">URL redirect Data</label> 
+                </div>`;
+            modal.find('.modal-body p').html(form);
+            modal.find('#button_save').click(function() {
+                data = modal.find('#url_record').val();
+                //if (! /^".*"$/.test(data)) {
+                //    data = '"' + data + '"';
+                //}
+                record_data.val(data);
+                modal.modal('hide');
+            });
+            modal.modal('show');
+        }
         });
         {% endif %}
 </script>
