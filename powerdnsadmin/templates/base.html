@@ -56,9 +56,11 @@
           <!-- Logo -->
           <a href="{{ url_for('index.index') }}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>PD</b>A</span>
+            <span class="logo-mini"><b><img src="{{ url_for('static', filename='img/slogo-white.svg') }}" alt="logo" width="auto" height="30px"></b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Isn't Easydomain</b></span>
+            <span class="logo-lg"><b>
+            <img src="{{ url_for('static', filename='img/Netnam-white.png') }}" alt="logo" width="auto" height="40px">
+            </b></span>
           </a>
           <!-- Header Navbar: style can be found in header.less -->
           <nav class="navbar navbar-static-top">

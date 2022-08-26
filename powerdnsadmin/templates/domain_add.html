@@ -112,10 +112,10 @@
                             </div>
                             <div class="input-group mb-2">
                                 <label class="input-group-text" for="domain_template">Select a template</label>
-                                <select class="form-select" id="domain_template" name="domain_template">
-                                    <option value="0">
+                                <select class="form-select" id="domain_template" name="domain_template" required>
+                                    <!--<option value="0">
                                         No template
-                                    </option>
+                                    </option>-->
                                     {% for template in templates %}
                                         <option value="{{ template.id }}">
                                             {{ template.name }}
