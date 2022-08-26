@@ -404,21 +404,21 @@
                 
                 var form = `
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="mx_priority">MX Priority</label>
+                    <label class="input-group-text col-3" for="mx_priority">MX Priority</label>
                     <input type="text" class="form-control" placeholder="eg. 10" name="mx_priority" id="mx_priority" aria-label="MX Priority">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="mx_server">MX Server</label>
+                    <label class="input-group-text col-3" for="mx_server">MX Server</label>
                     <input type="text" class="form-control" placeholder="eg. postfix.example.com" name="mx_server" id="mx_server" aria-label="MX Server">
                 </div>`;
             } else {
                 var parts = record_data.val().split(" ");
                 var form = `
-                <div class="input-group mb-3 col-2">
+                <div class="input-group mb-3 col-3">
                     <label class="input-group-text" for="mx_priority">MX Priority</label>
                     <input type="text" class="form-control" placeholder="eg. 10" name="mx_priority" id="mx_priority" aria-label="MX Priority" value="` + parts[0] + `">
                 </div>
-                <div class="input-group mb-3 col-2">
+                <div class="input-group mb-3 col-3">
                     <label class="input-group-text" for="mx_server">MX Server</label>
                     <input type="text" class="form-control" placeholder="eg. postfix.example.com" name="mx_server" id="mx_server" aria-label="MX Server" value="` + parts[1] + `">
                 </div>`;
@@ -440,38 +440,38 @@
             if (record_data.val() == "") {
                 var form = `
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_priority">SRV Priority</label>
+                    <label class="input-group-text col-3" for="srv_priority">SRV Priority</label>
                     <input type="text" class="form-control" placeholder="0" name="srv_priority" id="srv_priority" aria-label="SRV Priority">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_weight">SRV Weight</label>
+                    <label class="input-group-text col-3" for="srv_weight">SRV Weight</label>
                     <input type="text" class="form-control" placeholder="10" name="srv_weight" id="srv_weight" aria-label="SRV Weight">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_port">SRV Port</label>
+                    <label class="input-group-text col-3" for="srv_port">SRV Port</label>
                     <input type="text" class="form-control" placeholder="5060" name="srv_port" id="srv_port" aria-label="SRV Port">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_target">SRV Target</label>
+                    <label class="input-group-text col-3" for="srv_target">SRV Target</label>
                     <input type="text" class="form-control" placeholder="sip.example.com" name="srv_target" id="srv_target" aria-label="SRV Target">
                 </div>`;
             } else {
                 var parts = record_data.val().split(" ");
                 var form = `
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_priority">SRV Priority</label>
+                    <label class="input-group-text col-3" for="srv_priority">SRV Priority</label>
                     <input type="text" class="form-control" placeholder="0" name="srv_priority" id="srv_priority" aria-label="SRV Priority" value="` + parts[0] + `">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_weight">SRV Weight</label>
+                    <label class="input-group-text col-3" for="srv_weight">SRV Weight</label>
                     <input type="text" class="form-control" placeholder="10" name="srv_weight" id="srv_weight" aria-label="SRV Weight" value="` + parts[1] + `">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_port">SRV Port</label>
+                    <label class="input-group-text col-3" for="srv_port">SRV Port</label>
                     <input type="text" class="form-control" placeholder="5060" name="srv_port" id="srv_port" aria-label="SRV Port" value="` + parts[2] + `">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text col-2" for="srv_target">SRV Target</label>
+                    <label class="input-group-text col-3" for="srv_target">SRV Target</label>
                     <input type="text" class="form-control" placeholder="sip.example.com" name="srv_target" id="srv_target" aria-label="SRV Target" value="` + parts[3] + `">
                 </div>
                 `;
