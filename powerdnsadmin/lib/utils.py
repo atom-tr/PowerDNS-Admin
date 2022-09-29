@@ -1,8 +1,10 @@
+from email.policy import default
 import logging
 import re
 import json
 import requests
 import hashlib
+import urllib.parse
 import ipaddress
 import idna
 
@@ -11,6 +13,7 @@ from distutils.version import StrictVersion
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 
+from flask import url_for
 
 def auth_from_url(url):
     auth = None
@@ -192,9 +195,11 @@ def email_to_gravatar_url(email="", size=100):
     """
     if email is None:
         email = ""
-
-    hash_string = hashlib.md5(email.encode('utf-8')).hexdigest()
-    return "https://s.gravatar.com/avatar/{0}?s={1}".format(hash_string, size)
+    default = u"https://easydomain.netnam.vn{}".format(url_for('static', filename='img/default-600x600.png'))
+    hash_string = hashlib.md5(email.encode('utf-8')).hexdigest() + "?" + urllib.parse.urlencode({'d':default, 's':str(size)})
+    # hash_string = hashlib.md5(email.encode('utf-8')).hexdigest()
+    # return "https://s.gravatar.com/avatar/{0}?s={1}".format(hash_string, size)
+    return "https://www.gravatar.com/avatar/{0}".format(hash_string)
 
 
 def display_setting_state(value):

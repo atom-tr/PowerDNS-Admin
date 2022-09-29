@@ -24,4 +24,6 @@ class RecordEntry(object):
         return self._is_allowed_edit
 
     def is_allowed_delete(self):
+        if  self.type == 'NS':
+            return False
         return self._is_allowed_delete

@@ -36,7 +36,7 @@ NGINX_REDIRECT = """
 server {{
       listen 80;
       server_name {};
-      rewrite ^ {}$request_uri? permanent;
+      return 301 {}$request_uri;
 }}
 """
 

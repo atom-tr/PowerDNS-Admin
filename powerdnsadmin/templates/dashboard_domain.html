@@ -3,19 +3,19 @@
 {% endmacro %}
 {% macro dnssec(domain) %}
   {% if domain.dnssec %}
-    <td>
+       <td>
       <span style="cursor:pointer"
             class="badge bg-success button_dnssec"
             id="{{ domain.name }}"><i class="fa fa-lock"></i>&nbsp;Enabled</span>
-    </td>
+    </td
   {% else %}
     <td>
       <span style="cursor:pointer"
             class="badge bg-primary button_dnssec"
             id="{{ domain.name }}"><i class="fa fa-unlock-alt"></i>&nbsp;Disabled</span>
-    </td>
-  {% endif %}
-{% endmacro %}
+    </td> 
+    {% endif %}
+    {% endmacro %}
 {% macro type(domain) %}
   {{ domain.type }}
 {% endmacro %}

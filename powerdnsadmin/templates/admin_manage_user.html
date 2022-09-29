@@ -37,8 +37,9 @@
                                     <th>Username</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
-                                    <th>Email</th>
+                                    <th>SL</th>
                                     <th>Domains</th>
+                                    <th>Email</th>
                                     <th>Role</th>
                                     <th>Privileges</th>
                                     <th>Action</th>
@@ -47,12 +48,14 @@
                             <tbody>
                                 {% for user in users %}
                                     <tr class="odd gradeX">
-                                        <td>{{ user.username }}</td>
+                                        <td>
+                                        {{ user.username }}
+                                        </td>
                                         <td>{{ user.firstname }}</td>
                                         <td>{{ user.lastname }}</td>
-                                        <td>{{ user.email }}</td>
+                                        <td>{{user.domain|length}}</td>
                                         <td>
-                                            <ul id="collapse-list" class="list-group list-group-flush">
+                                            {#<ul id="collapse-list" class="list-group list-group-flush">
                                             {% if user.role.name=='Administrator' %}
                                                 <li class="list-group-item bg-transparent">ALL</li>
                                             {% elif user.domain %}
@@ -63,8 +66,18 @@
                                                     <button id="toggle-collapse" class="small list-group-item bg-transparent py-0"></button>
                                                 {% endif %}
                                             {% endif %}
-                                            </ul>
+                                            </ul>#}
+                                            {% if user.role.name=='Administrator' %}
+                                                ALL
+                                            {% elif user.domain %}
+                                            <div class="line-clamp" onclick="$(this).toggleClass('line-clamp')">
+                                                {% for u in user.domain %}
+                                                    <p><a href="/domain/{{ u.name }}">{{ u.name }}</a></p>{#{{ "<br>" if not loop.last else "" }}#}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
                                         </td>
+                                        <td>{{ user.email }}</td>
                                         <td>
                                             <select id="{{ user.username }}"
                                                     class="user_role"
@@ -186,21 +199,23 @@
         applyChanges(postdata, $SCRIPT_ROOT + '/admin/manage-user', showResult = true);
     });
     </script>
-
+{#
     <script>
-        var toggleStatus = true;
         var hideElements = function(){
-            $('#collapse-list li').each(function(i){
-                if(i > 2){
-                    $(this).slideToggle(200);
+            $('tr').each(function(tr){
+                var toggleStatus = true;
+                $('#collapse-list li').each(function(i){
+                    if(i > 3){
+                        $(this).slideToggle(200);
+                    }
+                });
+                $('#toggle-collapse').text('more..');
+                console.log(toggleStatus);
+                toggleStatus = !toggleStatus;
+                if(toggleStatus) {
+                    $('#toggle-collapse').text('less..');
                 }
-            });
-            $('#toggle-collapse').text('more..');
-            console.log(toggleStatus);
-            toggleStatus = !toggleStatus;
-            if(toggleStatus) {
-                $('#toggle-collapse').text('less..');
-            }
+            })
         };
         
         hideElements();
@@ -214,6 +229,7 @@
             //toggleStatus = !toggleStatus;
         });
     </script>
+#}
 {% endblock extrascripts %}
 {% block modals %}
     <div class="modal fade modal-warning" id="modal_revoke">

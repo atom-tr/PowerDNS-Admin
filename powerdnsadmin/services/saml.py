@@ -192,8 +192,8 @@ class SAML(object):
             'givenName'] = current_app.config['SAML_SP_CONTACT_NAME']
         settings['organization'] = {}
         settings['organization']['en-US'] = {}
-        settings['organization']['en-US']['displayname'] = 'PowerDNS-Admin'
-        settings['organization']['en-US']['name'] = 'PowerDNS-Admin'
+        settings['organization']['en-US']['displayname'] = 'Easydomain-Netnam'
+        settings['organization']['en-US']['name'] = 'Easydomain-Netnam'
         settings['organization']['en-US']['url'] = own_url
         auth = self.OneLogin_Saml2_Auth(req, settings)
         return auth

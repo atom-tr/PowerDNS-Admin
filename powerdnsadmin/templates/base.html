@@ -42,11 +42,21 @@
     {% endblock head %}
     <style>
     a { text-decoration: none }  .btn-show-hover > span { margin: 0; padding: 0; display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap; max-width: 0; transition: max-width 0.2s ease-out; margin-left: -4px; } .btn-show-hover > span::before { content: ""; margin-left: 4px; } .btn-show-hover:hover > span, .btn-show-hover:active > span { max-width: 300px; transition: max-width 0.5s ease-in; }
+    .line-clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;  
+      overflow: hidden;
+    }
+    .gradeX p {
+      margin-block-start: 0; 
+      margin-block-end: 0.2em;
+    }
     </style>
   </head>
   <body class="hold-transition skin-blue sidebar-mini {% if not SETTING.get('fullscreen_layout') %}layout-boxed{% endif %}">
     {% if OFFLINE_MODE %}
-      {% set gravatar_url = url_for('static', filename='img/gravatar.png') %}
+      {% set gravatar_url = url_for('static', filename='img/default-600x600.png') %}
     {% elif current_user.email is defined %}
       {% set gravatar_url = current_user.email|email_to_gravatar_url(size=80) %}
     {% endif %}

@@ -329,11 +329,13 @@
             $.post($SCRIPT_ROOT + '/domain/setting/' + domain + '/delete', {
                 '_csrf_token': '{{ csrf_token() }}'
             }, function () {
-                window.location.href = '{{ url_for('dashboard.dashboard') }}';
+                window.location.href = "{{ url_for('dashboard.dashboard') }}";
             });
             modal.modal('hide');
+            window.location.href = "{{ url_for('dashboard.dashboard') }}";
         })
         modal.modal('show');
+        
     });
 
     // domain master address input handeling

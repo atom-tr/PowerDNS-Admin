@@ -64,7 +64,8 @@ def domains_custom(boxId):
     render = template.make_module(vars={"current_user": current_user, "allow_user_view_history": Setting().get('allow_user_view_history')})
 
     columns = [
-        Domain.name, Domain.dnssec, Domain.type, Domain.serial, Domain.master,
+        #Domain.name, Domain.dnssec, Domain.type, Domain.serial, Domain.master,
+        Domain.name, Domain.type, Domain.serial, Domain.master,
         Domain.account_id
     ]
 
@@ -120,7 +121,7 @@ def domains_custom(boxId):
     for domain in domains:
         data.append([
             render.name(domain),
-            render.dnssec(domain),
+            # render.dnssec(domain),
             render.type(domain),
             render.serial(domain),
             render.master(domain),

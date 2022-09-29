@@ -307,6 +307,7 @@ class Record(object):
         return new_rrsets, del_rrsets
 
     def apply_rrsets(self, domain_name, rrsets):
+        # current_app.logger.error(utils.pretty_json(rrsets))
         for rr in rrsets['rrsets']:
             if 'type' in rr and rr['type'] == "URL":
                 try:
@@ -320,15 +321,22 @@ class Record(object):
                         url = URLRecord.query.filter_by(domain_id=domain_id, name=rr['name']).first()
                         if url: 
                             url.content = rr['records'][0]['content'] if 'content' in rr['records'][0] else ''
-                            url.comment = rr['comments'][0]['comments'] if 'comments' in rr else ''
-                            url.disabled = rr['comments'][0]['disabled'] if 'comments' in rr else False
+                            url.comment = rr['comments'][0]['content'] if 'comments' in rr else ''
+                            url.disabled = True if rr['records'][0]['disabled'] == 'true' else False
                             db.session.commit()
                         else:
                             url = URLRecord(domain_id=domain_id, rr=rr)
                             db.session.add(url)
                 except Exception as e:
-                    return {'error': e}
-                return {}
+                    return {'error': f'{rr["changetype"]} URL fail: {e}'}
+                else:
+                    try: 
+                        rrsets['rrsets'] = [_ for _ in rrsets['rrsets'] if _ != rr]
+                    except Exception as e:
+                        return {'error': e}
+            else:
+                continue
+                    
         headers = {'X-API-Key': self.PDNS_API_KEY, 'Content-Type': 'application/json'}
         jdata = utils.fetch_json(urljoin(
             self.PDNS_STATS_URL, self.API_EXTENDED_URL +

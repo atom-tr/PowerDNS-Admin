@@ -98,13 +98,13 @@
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                             {% else %}
-                                                <button type="button" class="btn btn-outline-warning">
+                                                <button type="button" class="btn btn-outline-warning" disabled>
                                                     <i class="fa fa-exclamation-circle"></i>
                                                 </button>
                                             {% endif %}
                                         </td>
                                         <td width="5%">
-                                            {% if record.is_allowed_delete() %}
+                                            {% if record.is_allowed_delete() or current_user.role.name in ['Administrator', 'Operator'] %}
                                                 <button type="button"
                                                         class="btn btn-outline-danger button_delete"
                                                         title="Delete">
